@@ -11,15 +11,13 @@ const UploadQuestion = () => {
   };
 
   const handleSubmit = async (file_name) => {
-    const response = await fetch("http://localhost:3000/api/qa", {
+    const response = await fetch("http://localhost:3000/api/question", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         question: question,
-        answer: "",
-        fileName: file_name,
       }),
     });
     if (response.ok) {
@@ -30,24 +28,6 @@ const UploadQuestion = () => {
       console.log("Question upload failed");
     }
   };
-
-  const getFileNames = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/fileNames");
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Unable to fetch file names: ${errorMessage}`);
-      }
-      const data = await response.json();
-      setAllFileNames(data);
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    getFileNames();
-  }, []);
 
   return (
     <div>
@@ -61,14 +41,10 @@ const UploadQuestion = () => {
           cols="50"
         />
         <button
-          style={{ ...buttonStyle, backgroundColor: "#4CAF50" }}
-          onClick={() => {
-            all_file_names.map((file_name) => {
-              return handleSubmit(file_name);
-            });
-          }}
-        >
-          Submit
+            style={{ ...buttonStyle, backgroundColor: "#4CAF50" }}
+            onClick={() => handleSubmit(question)}
+          >
+            Submit
         </button>
       </div>
       <Table className="upload" />

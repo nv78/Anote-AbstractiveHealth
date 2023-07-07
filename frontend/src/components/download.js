@@ -8,31 +8,31 @@ function Download() {
   }, []);
 
   const jsonToCsv = (jsonObj) => {
-    jsonObj = JSON.parse(JSON.parse(jsonObj));
-    let str = "";
-    let columnNames = [];
-
-    for (let file in jsonObj) {
-      if (!jsonObj.hasOwnProperty(file)) continue;
-
-      // Create header row if it doesn't exist
-      if (!str) {
-        columnNames = jsonObj[file].map(({ question }) => question);
-        str = `"FileName",${columnNames
-          .map((name) => `"${name}"`)
-          .join(",")}\r\n`;
-      }
-
-      const answers = columnNames.map((name) => {
-        const answerObj = jsonObj[file].find((obj) => obj.question === name);
-        return answerObj ? `"${answerObj.answer}"` : '""';
+    let rows = [];
+  
+    for (let file in jsonObj.file_names) {
+      if (!jsonObj.file_names.hasOwnProperty(file)) continue;
+  
+      jsonObj.file_names[file].forEach((answer, i) => {
+        let row = {};
+        row['FileName'] = file;
+        row['Question'] = jsonObj.questions[i] ? jsonObj.questions[i] : 'N/A';
+        row['Answer'] = answer;
+        row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
+        rows.push(row);
       });
-
-      str += `"${file}",${answers.join(",")}\r\n`;
     }
-
-    return str;
+  
+    // Convert object to CSV string
+    const csv = rows.map(row => {
+      return Object.values(row).map(val => JSON.stringify(val)).join(',');
+    }).join('\r\n');
+  
+    // Add header
+    const header = Object.keys(rows[0]).join(',') + '\r\n';
+    return header + csv;
   };
+  
 
   const getEverything = async () => {
     const response = await fetch("http://localhost:3000/api/everything", {
@@ -43,7 +43,7 @@ function Download() {
       throw new Error(`Unable to fetch questions: ${errorMessage}`);
     } else {
       const data = await response.json();
-      setJsonInput(JSON.stringify(data));
+      setJsonInput(data);
     }
   };
 

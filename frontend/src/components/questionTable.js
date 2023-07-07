@@ -8,7 +8,7 @@ const QuestionTable = () => {
 
   const getQuestions = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/all_questions", {
+      const response = await fetch("http://localhost:3000/api/question", {
         method: "GET",
       });
       if (!response.ok) {
@@ -16,7 +16,11 @@ const QuestionTable = () => {
         throw new Error(`Unable to fetch questions: ${errorMessage}`);
       }
       const data = await response.json();
-      setQuestions(data);
+      let new_data = [];
+      if (data) {
+        new_data = JSON.parse(data);
+      }
+      setQuestions(new_data);;
     } catch (error) {
       console.log("Error:", error);
     }
@@ -24,7 +28,7 @@ const QuestionTable = () => {
 
   const handleDelete = async (question_to_delete) => {
     const response = await fetch(
-      `http://localhost:3000/api/one_question_for_all?&question=${question_to_delete}`,
+      `http://localhost:3000/api/question?&question=${question_to_delete}`,
       {
         method: "DELETE",
       }

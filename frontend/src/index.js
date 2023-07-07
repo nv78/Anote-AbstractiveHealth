@@ -6,6 +6,7 @@ import UploadPage from "./pages/uploadPage";
 import AnnotatePage from "./pages/annotatePage";
 import DownloadPage from "./pages/downloadPage";
 import CustomizePage from "./pages/customizePage";
+import LoginPage from "./pages/loginPage";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/download",
     element: <DownloadPage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
   },
 ]);
 

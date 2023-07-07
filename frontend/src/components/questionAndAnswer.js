@@ -43,20 +43,20 @@ const QuestionAndAnswer = (props) => {
     }));
   };
 
-  const handleDelete = async (question_to_delete) => {
-    const response = await fetch(
-      `http://localhost:3000/api/qa?fileName=${filename}&question=${question_to_delete}`,
-      {
-        method: "DELETE",
-      }
-    );
-    if (response.ok) {
-      console.log("Question and Answer deleted successfully");
-      getQuestionsAndAnswers();
-    } else {
-      console.log("Question and Answer deletion failed");
-    }
-  };
+  // const handleDelete = async (question_to_delete) => {
+  //   const response = await fetch(
+  //     `http://localhost:3000/api/qa?fileName=${filename}&question=${question_to_delete}`,
+  //     {
+  //       method: "DELETE",
+  //     }
+  //   );
+  //   if (response.ok) {
+  //     console.log("Question and Answer deleted successfully");
+  //     getQuestionsAndAnswers();
+  //   } else {
+  //     console.log("Question and Answer deletion failed");
+  //   }
+  // };
 
   const handleUpdateAnswer = async (question, answer, filename) => {
     if (answer === undefined) {
@@ -64,7 +64,7 @@ const QuestionAndAnswer = (props) => {
       return;
     }
 
-    const response = await fetch(`http://localhost:3000/api/qa`, {
+    const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,81 @@ const QuestionAndAnswer = (props) => {
     }
   };
 
-  //   return (
+  return (
+    <div className="container">
+      <table className="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+            <th>Update/Add Answer</th>
+            {/* <th>Delete</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {questions_and_answers.map((q_and_a) => (
+            <tr key={q_and_a.question}>
+              <td>
+                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
+                  {q_and_a.question}
+                </div>
+              </td>
+              <td>
+                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
+                  {q_and_a.answer}
+                </div>
+              </td>
+              <td>
+                <div className="field">
+                  <div className="control">
+                    <input
+                      className="input is-small"
+                      style={{
+                        width: "80%",
+                        overflow: "auto",
+                      }}
+                      type="text"
+                      value={answer[q_and_a.question] || ""}
+                      onChange={(event) =>
+                        handleAnswerChange(q_and_a.question, event)
+                      }
+                    />
+                    <button
+                      style={{ width: "20%" }}
+                      className="button is-small is-link"
+                      onClick={() =>
+                        handleUpdateAnswer(
+                          q_and_a.question,
+                          answer[q_and_a.question],
+                          filename
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  </div>
+                </div>
+              </td>
+              {/* <td>
+                <button
+                  className="button is-small is-danger"
+                  onClick={() => handleDelete(q_and_a.question)}
+                >
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                </button>
+              </td> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default QuestionAndAnswer;
+
+
+//   return (
   //     <div className="container">
   //       <table className="table is-striped is-hoverable is-fullwidth">
   //         <thead>
@@ -140,75 +214,3 @@ const QuestionAndAnswer = (props) => {
   //       </table>
   //     </div>
   //   );
-  return (
-    <div className="container">
-      <table className="table is-striped is-hoverable is-fullwidth">
-        <thead>
-          <tr>
-            <th>Question</th>
-            <th>Answer</th>
-            <th>Update/Add Answer</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions_and_answers.map((q_and_a) => (
-            <tr key={q_and_a.question}>
-              <td>
-                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
-                  {q_and_a.question}
-                </div>
-              </td>
-              <td>
-                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
-                  {q_and_a.answer}
-                </div>
-              </td>
-              <td>
-                <div className="field">
-                  <div className="control">
-                    <input
-                      className="input is-small"
-                      style={{
-                        width: "80%",
-                        overflow: "auto",
-                      }}
-                      type="text"
-                      value={answer[q_and_a.question] || ""}
-                      onChange={(event) =>
-                        handleAnswerChange(q_and_a.question, event)
-                      }
-                    />
-                    <button
-                      style={{ width: "20%" }}
-                      className="button is-small is-link"
-                      onClick={() =>
-                        handleUpdateAnswer(
-                          q_and_a.question,
-                          answer[q_and_a.question],
-                          filename
-                        )
-                      }
-                    >
-                      <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <button
-                  className="button is-small is-danger"
-                  onClick={() => handleDelete(q_and_a.question)}
-                >
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-export default QuestionAndAnswer;
