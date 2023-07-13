@@ -1,5 +1,7 @@
 import RedirectButton from "./components/redirectButton";
 import "./styling/redirectButtonStyle.css";
+import "./components/loginButton"
+import LoginButton from "./components/loginButton";
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
         <RedirectButton buttonText="Customize" buttonUrl="/customize" />
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
+        <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <LoginButton />
       </nav>
     </div>
   );

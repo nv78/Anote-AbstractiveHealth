@@ -1,12 +1,35 @@
 import React, { useState, useEffect} from "react";
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
 
 const LoginPage = () => {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-    // TODO
     const handleSubmit = (e) => {
-        console.log("username: " + username)
+        fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({username: username, password: password})
+        })
+        .then((res) => res.json()) // parsing the response
+        .then((data) => {
+            if (data.error) {
+                if (data.status === 401) {
+                    alert("User not found")
+                } else if (data.status === 402) {
+                    alert("Incorrect username or password")
+                }
+            } else {
+                Cookies.set('session_token', data.session_token); // setting the cookie
+                navigate('/')
+                alert("Successfully logged in")
+            }
+        })
     }
 
     return (
@@ -40,6 +63,10 @@ const LoginPage = () => {
                 <button type="submit" onClick={handleSubmit}>
                     Login
                 </button>
+            </div>
+
+            <div>
+                <p>To create a new account click <a href="/signup" style={{color: 'blue'}}>here</a></p>
             </div>
         </div>
 

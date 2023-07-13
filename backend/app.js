@@ -7,6 +7,7 @@ const fs = require("fs");
 const db = require("./src/database.js");
 const pw = require("./src/password.js");
 const cookieParser = require("cookie-parser");
+const { constants } = require("fs/promises");
 const app = express();
 
 
@@ -50,7 +51,7 @@ app.post("/api/signup", (req, res) => {
       res.status(401).send("User already exists");
       return;
     }
-    pw.addUser(username, password);
+    pw.addUser(username, password, true);
     res.send("Successfully signed up");
 });
 
@@ -59,146 +60,195 @@ app.post("/api/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   const user = pw.getUser(username);
-  
   if (user === undefined) {
     res.status(401).send("User not found");
     return;
   }
 
   if (!pw.verifyPassword(username, password)) {
-    res.status(401).send("Incorrect password");
+    res.status(402).send("Incorrect password");
     return;
   }
 
   // Save this session identifier in the database associated with the user
   const session_token = pw.updateUserSession(username);
-  
   // Set a cookie in the user's browser with this session identifier
   res.cookie('session_token', session_token, { httpOnly: true }); // httpOnly flag to protect against cross-site scripting attacks
-
-  res.send("Successfully logged in");
+  res.json({message: "Successfully logged in", session_token: session_token});
 });
 
+// Logout
 app.get('/api/logout', (req, res) => {
   res.clearCookie('session_id');
   res.send('Logged out successfully');
 });
 
+// Check admin
+app.get('/api/isAdmin', (req, res) => {
+  const session_token = req.query.session_token;
+  if (!pw.isAdmin(session_token)) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+  res.send("passed");
+})
 
-  
+// get all usernames
+app.get('/api/AllUsername', (req, res) => {
+  const session_token = req.query.session_token;
+  res.json(pw.getAllUsername(session_token));
+})
+
+// get allowed projects by username
+app.get('/api/AllowedFiles', (req, res) => {
+  let username = req.query.username;
+  if (!username) {
+    const session_token = req.query.session_token;
+    const user = pw.getUserBySessionToken(session_token);
+    if (user === undefined) {
+      res.status(401).send("User not found");
+      return;
+    }
+    username = user.username;
+  }
+  res.json(pw.getAllowedFiles(username));
+})
+
+// add allowed file name by username
+app.patch('/api/addAllowedFile', (req, res) => {
+  const username = req.body.username;
+  const file_name = req.body.fileName;
+  pw.addAllowedFile(username, file_name);
+  res.send("Successfully updated");
+})
+
+// delete allowed file name by username
+app.patch('/api/deleteAllowedFile', (req, res) => {
+  const username = req.body.username;
+  const file_name = req.body.fileName;
+  pw.deleteAllowedFile(username, file_name);
+  res.send("Successfully updated");
+})
+
+// pw end
 // Upload a file
 app.post("/api/upload", upload.array("files"), function (req, res, next) {
-    // req.files is array of `files` files
-    // req.body will contain the text fields, if there were any
-    db.updateDatabase();
-    res.send("Successfully uploaded!");
-  });
+  const session_token = req.query.session_token;
+  if (!pw.isAdmin(session_token)) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+  // req.files is array of `files` files
+  // req.body will contain the text fields, if there were any
+  db.updateDatabase();
+  res.send("Successfully uploaded!");
+});
   
-  // Get all file names
-  app.get("/api/fileNames", (req, res) => {
-    const directoryPath = path.join(__dirname, "uploads");
-    fs.readdir(directoryPath, (err, files) => {
-      if (err) {
-        console.log("Unable to scan directory: " + err);
-        res.status(500).send("Unable to scan directory");
-        return;
-      }
-      const allowedFileTypes = [".txt", ".pdf"];
-      const filteredFiles = files.filter((file) =>
-        allowedFileTypes.includes(path.extname(file))
-      );
-      res.json(filteredFiles);
-    });
+// Get all file names
+app.get("/api/fileNames", (req, res) => {
+  const directoryPath = path.join(__dirname, "uploads");
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.log("Unable to scan directory: " + err);
+      res.status(500).send("Unable to scan directory");
+      return;
+    }
+    const allowedFileTypes = [".txt", ".pdf"];
+    const filteredFiles = files.filter((file) =>
+      allowedFileTypes.includes(path.extname(file))
+    );
+    res.json(filteredFiles);
   });
+});
   
 // Get one file by file name
 app.get("/api/files", (req, res) => {
-const directoryPath = path.join(__dirname, "uploads");
-fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-    console.log("Unable to scan directory: " + err);
-    res.status(500).send("Unable to scan directory");
-    return;
-    }
+  const directoryPath = path.join(__dirname, "uploads");
+  fs.readdir(directoryPath, (err, files) => {
+      if (err) {
+      console.log("Unable to scan directory: " + err);
+      res.status(500).send("Unable to scan directory");
+      return;
+      }
 
-    const allowedFileTypes = [".txt", ".pdf"];
-    const filteredFiles = files.filter((file) =>
-    allowedFileTypes.includes(path.extname(file))
-    );
+      const allowedFileTypes = [".txt", ".pdf"];
+      const filteredFiles = files.filter((file) =>
+      allowedFileTypes.includes(path.extname(file))
+      );
 
-    for (const file of filteredFiles) {
-    if (file === req.query.filename) {
-        // Send file to client
-        res.sendFile(path.join(directoryPath, req.query.filename));
-        return;
-    }
-    }
+      for (const file of filteredFiles) {
+      if (file === req.query.filename) {
+          // Send file to client
+          res.sendFile(path.join(directoryPath, req.query.filename));
+          return;
+      }
+      }
 
-    // If we got here, file was not found
-    res.status(404).send("File not found");
-});
+      // If we got here, file was not found
+      res.status(404).send("File not found");
+  });
 });
 
 // Create a question
 app.post("/api/question", (req, res) => {
-const question = req.body.question;
-db.createQuestion(question);
-res.json(question);
+  const question = req.body.question;
+  db.createQuestion(question);
+  res.json(question);
 });
 
 // Get all questions
 app.get("/api/question", (req, res) => {
-const file_name = req.query.fileName;
-const questions = db.getAllQuestions();
-res.json(questions);
+  const file_name = req.query.fileName;
+  const questions = db.getAllQuestions();
+  res.json(questions);
 });
 
 // Delete a question by itself
 app.delete("/api/question", (req, res) => {
-const question = req.query.question;
-db.deleteQuestionAndAnswer(question);
-res.send("Successfully deleted");
+  const question = req.query.question;
+  db.deleteQuestionAndAnswer(question);
+  res.send("Successfully deleted");
 });
 
 // Update answer of a question in a designated file
 app.patch("/api/answer", (req, res) => {
-const question = req.body.question;
-const answer = req.body.answer;
-const file_name = req.body.fileName;
-db.updateAnswer(file_name, question, answer);
-res.send("Successfully updated");
+  const question = req.body.question;
+  const answer = req.body.answer;
+  const file_name = req.body.fileName;
+  db.updateAnswer(file_name, question, answer);
+  res.send("Successfully updated");
 });
 
 // Get everything
 app.get("/api/everything", (req, res) => {
-const everything = db.getEverything();
-res.json(everything);
+  const everything = db.getEverything();
+  res.json(everything);
 });
 
 app.get("/api/qa", (req, res) => {
-const file_name = req.query.fileName;
-const qa = db.getAllQuestionAndAnswerFromFileName(file_name);
-res.json(qa);
+  const file_name = req.query.fileName;
+  const qa = db.getAllQuestionAndAnswerFromFileName(file_name);
+  res.json(qa);
 });
 
 // Update finished
 app.patch("/api/addFinished", (req, res) => {
-const file_name = req.body.fileName;
-db.addFinished(file_name);
-res.send("Successfully updated");
+  const file_name = req.body.fileName;
+  db.addFinished(file_name);
+  res.send("Successfully updated");
 });
 
 // Delete from finished
 app.patch("/api/deleteFinished", (req, res) => {
-const file_name = req.body.fileName;
-db.deleteFinished(file_name);
-res.send("Successfully updated");
+  const file_name = req.body.fileName;
+  db.deleteFinished(file_name);
+  res.send("Successfully updated");
 });
 
 // Get finished
 app.get("/api/getFinished", (req, res) => {
-const finished = db.getAllFinishedFiles();
-res.json(finished);
+  const finished = db.getAllFinishedFiles();
+  res.json(finished);
 });
 
 module.exports = app;

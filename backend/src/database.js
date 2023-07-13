@@ -191,7 +191,6 @@ const getAllQuestions = () =>  {
 const getAllQuestionAndAnswerFromFileName = (file_name) => {
     try {
         if (!database["file_names"][file_name]) {
-            console.log("File not found")
             return []
         }
         const answers = database["file_names"][file_name];
@@ -211,6 +210,7 @@ const getAllQuestionAndAnswerFromFileName = (file_name) => {
 
 
 module.exports = {
+    getAllFileNames,
     createQuestion,
     getAllQuestionAndAnswerFromFileName,
     updateAnswer,

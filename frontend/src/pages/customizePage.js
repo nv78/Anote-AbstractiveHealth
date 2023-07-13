@@ -3,6 +3,7 @@ import RedirectButton from "../components/redirectButton";
 import UploadQuestion from "../components/uploadQuestions";
 // import "../styling/redirectButtonStyle.css"
 import Table from "../components/questionTable";
+import LoginButton from "../components/loginButton";
 
 const CustomizePage = () => {
   return (
@@ -14,6 +15,8 @@ const CustomizePage = () => {
         <RedirectButton buttonText="Customize" buttonUrl="/customize" />
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
+        <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <LoginButton />
       </nav>
       <br />
       <h3>Add Your Questions Here</h3>

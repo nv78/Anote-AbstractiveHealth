@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fetch from "cross-fetch";
 import QuestionAndAnswer from "../components/questionAndAnswer";
+import Cookies from 'js-cookie';
 import "bulma/css/bulma.css";
 
 const DisplayFile = () => {
@@ -8,37 +9,44 @@ const DisplayFile = () => {
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const [filePreview, setFilePreview] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
+  const session_token = Cookies.get('session_token');
+
+  const getFileNames = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/AllowedFiles?session_token=${session_token}`);
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Unable to fetch file names: ${errorMessage}`);
+      }
+      const data = await response.json();
+      const finishedFilesResponse = await fetch("http://localhost:3000/api/getFinished");
+      const finishedFiles = await finishedFilesResponse.json();
+      const sortedData = data.sort((a, b) => finishedFiles.includes(a) - finishedFiles.includes(b));
+      setFileNames(sortedData);
+      if (sortedData.length > 0) {
+        handleFileChange(sortedData[0]);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+  const fetchFinishedFiles = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/getFinished");
+      const finishedFiles = await response.json();
+      setIsFinished(finishedFiles.includes(fileNames[selectedFileIndex]));
+    } catch (error) {
+      console.log("Error fetching finished files:", error);
+    }
+  };
+
 
   useEffect(() => {
-    const getFileNames = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/fileNames");
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(`Unable to fetch file names: ${errorMessage}`);
-        }
-        const data = await response.json();
-        setFileNames(data);
-        if (data.length > 0) {
-          handleFileChange(data[0]);
-        }
-      } catch (error) {
-        console.log("Error:", error);
-      }
-    };
     getFileNames();
   }, []);
 
   useEffect(() => {
-    const fetchFinishedFiles = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/getFinished");
-        const finishedFiles = await response.json();
-        setIsFinished(finishedFiles.includes(fileNames[selectedFileIndex]));
-      } catch (error) {
-        console.log("Error fetching finished files:", error);
-      }
-    };
     fetchFinishedFiles();
   }, [fileNames, selectedFileIndex]);
 

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import Cookies from 'js-cookie';
 
 const UploadButton = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const session_token = Cookies.get('session_token');
 
   const handleFileChange = (event) => {
     setSelectedFiles([...event.target.files]);
@@ -13,7 +15,7 @@ const UploadButton = () => {
       formData.append("files", file);
     });
 
-    const response = await fetch("http://localhost:3000/api/upload", {
+    const response = await fetch(`http://localhost:3000/api/upload?session_token=${session_token}`, {
       method: "POST",
       body: formData,
     });
@@ -24,7 +26,7 @@ const UploadButton = () => {
       window.alert("Files uploaded successfully");
     } else {
       console.log("File upload failed");
-      window.alert("File upload failed");
+      window.alert("File upload failed/You are not admin");
     }
   };
 

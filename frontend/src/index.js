@@ -7,7 +7,10 @@ import AnnotatePage from "./pages/annotatePage";
 import DownloadPage from "./pages/downloadPage";
 import CustomizePage from "./pages/customizePage";
 import LoginPage from "./pages/loginPage";
+import SignupPage from "./pages/signupPage";
+import AdminPage from "./pages/adminPage"
 import "./index.css";
+
 
 const router = createBrowserRouter([
   {
@@ -34,6 +37,14 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
+  {
+    path: "/signup",
+    element: <SignupPage />,
+  },
+  {
+    path: "/admin",
+    element: <AdminPage />,
+  }
 ]);
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));

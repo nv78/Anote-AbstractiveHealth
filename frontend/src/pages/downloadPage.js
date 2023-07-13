@@ -2,6 +2,7 @@ import React from "react";
 import RedirectButton from "../components/redirectButton";
 import Download from "../components/download";
 import Table from "../components/table.js";
+import LoginButton from "../components/loginButton";
 // import "../styling/redirectButtonStyle.css"
 
 const DownloadPage = () => {
@@ -14,6 +15,8 @@ const DownloadPage = () => {
         <RedirectButton buttonText="Customize" buttonUrl="/customize" />
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
+        <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <LoginButton />
       </nav>
       <Table />
       <Download />

@@ -1,6 +1,7 @@
 import React from "react";
 import RedirectButton from "../components/redirectButton";
 import DisplayFile from "../components/displayFiles";
+import LoginButton from "../components/loginButton";
 // import "../styling/Annotation.css"
 // import "../styling/redirectButtonStyle.css"
 
@@ -34,6 +35,8 @@ const AnnotatePage = () => {
           buttonText="Download"
           buttonUrl="/download"
         />
+        <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <LoginButton />
       </nav>
       <DisplayFile />
     </div>

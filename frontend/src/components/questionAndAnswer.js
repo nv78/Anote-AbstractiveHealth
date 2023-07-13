@@ -26,7 +26,6 @@ const QuestionAndAnswer = (props) => {
       }
       const data = await response.json();
       setquestions_and_answers(data);
-      console.log(data);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -42,21 +41,6 @@ const QuestionAndAnswer = (props) => {
       [question]: event.target.value,
     }));
   };
-
-  // const handleDelete = async (question_to_delete) => {
-  //   const response = await fetch(
-  //     `http://localhost:3000/api/qa?fileName=${filename}&question=${question_to_delete}`,
-  //     {
-  //       method: "DELETE",
-  //     }
-  //   );
-  //   if (response.ok) {
-  //     console.log("Question and Answer deleted successfully");
-  //     getQuestionsAndAnswers();
-  //   } else {
-  //     console.log("Question and Answer deletion failed");
-  //   }
-  // };
 
   const handleUpdateAnswer = async (question, answer, filename) => {
     if (answer === undefined) {
@@ -139,14 +123,6 @@ const QuestionAndAnswer = (props) => {
                   </div>
                 </div>
               </td>
-              {/* <td>
-                <button
-                  className="button is-small is-danger"
-                  onClick={() => handleDelete(q_and_a.question)}
-                >
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
-              </td> */}
             </tr>
           ))}
         </tbody>
