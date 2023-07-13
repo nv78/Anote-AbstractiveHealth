@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import RedirectButton from "../components/redirectButton";
 import Download from "../components/download";
 import Table from "../components/table.js";
 import LoginButton from "../components/loginButton";
+import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 // import "../styling/redirectButtonStyle.css"
 
 const DownloadPage = () => {
+  const session_token = Cookies.get("session_token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAdmin();
+  }, []);
+
+  const checkAdmin = async () => {
+    try {
+        const response = await fetch(`http://localhost:3000/api/isAdmin?session_token=${session_token}`);
+        if (!response.ok) {
+            navigate('/');
+            window.alert("You are not an admin!");
+        }
+    } catch (error) {
+        console.log("Error:", error);
+    }
+  };
+
+
   return (
     <div className="download">
       <h1 className="abstractivetitle">Abstractive Health</h1>

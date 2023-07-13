@@ -3,7 +3,6 @@ import RedirectButton from "../components/redirectButton";
 import LoginButton from "../components/loginButton";
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
-import { get } from "mongoose";
 
 const AdminPage = () => {
     const session_token = Cookies.get("session_token");
