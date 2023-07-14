@@ -1,0 +1,21 @@
+.InnerAccountView {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    height: 500px;
+    color: white;
+}
+
+.LeftAccountView {
+    background-color: #3D4449;
+    height: 500px;
+}
+
+.LeftAccountView ul {
+    list-style: none;
+    text-align: left;
+}
+
+.RightAccountView {
+    height: 500px;
+}
+
