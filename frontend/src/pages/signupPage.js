@@ -12,6 +12,12 @@ function SignupPage() {
   const passwordRef = useRef();
 
   const handleSubmit = (event) => {
+    console.log("event")
+    console.log(event)
+    console.log("email")
+    console.log(emailRef)
+    console.log("password")
+    console.log(passwordRef)
     event.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
