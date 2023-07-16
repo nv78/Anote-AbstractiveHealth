@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./pages/homePage";
 import UploadPage from "./pages/uploadPage";
 import AnnotatePage from "./pages/annotatePage";
 import DownloadPage from "./pages/downloadPage";
@@ -14,8 +14,8 @@ import "./index.css";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />,
+    path: "/home",
+    element: <Home />,
   },
   {
     path: "/customize",

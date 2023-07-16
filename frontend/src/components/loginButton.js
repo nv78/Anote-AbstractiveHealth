@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import Cookies from 'js-cookie';
+import '../styling/Home.css';
 
 const LoginButton = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['session_token']);
@@ -30,7 +31,7 @@ const LoginButton = () => {
 
   return (
     <div>
-      <button onClick={handleClick}>
+      <button onClick={handleClick} className='button-container'>
         {isSignedIn ? 'Logout' : 'Login'}
       </button>
     </div>

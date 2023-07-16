@@ -37,7 +37,7 @@ function SignupPage() {
       <form onSubmit={handleSubmit}>
 
       <nav>
-        <RedirectButton buttonText="Home" buttonUrl="/" />
+        <RedirectButton buttonText="Home" buttonUrl="/home" />
         <RedirectButton buttonText="Upload" buttonUrl="/upload" />
         <RedirectButton buttonText="Customize" buttonUrl="/customize" />
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />

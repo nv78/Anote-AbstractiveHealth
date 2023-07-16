@@ -1,0 +1,108 @@
+/* styles.css */
+
+
+.centered {
+    text-align: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    margin-top: 50px;
+    margin-left: 25%;
+    margin-right: 25%;
+    font-family: Helvetica, sans-serif;
+    font-weight: 700;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 10px;
+    margin-right: 10px;
+    height: 50px;
+    width: 150px;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+    background: #DEFE47;
+    border-radius: 4px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .button-container button {
+    justify-content: flex-end;
+    padding: 10px 10px;
+    margin-right: 10px;
+    height: 50px;
+    width: 150px;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+    background: #DEFE47;
+    border-radius: 4px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .button-container {
+    justify-content: flex-end;
+    padding: 10px 10px;
+    margin-right: 10px;
+    height: 50px;
+    width: 150px;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+    background: #DEFE47;
+    border-radius: 4px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+    margin-bottom: 30px;
+  }
+
+  .button-container:hover {
+    background-color: yellow;
+  }
+  .button-container a {
+    color: black;
+  }
+
+  .ButtonType2 {
+    background-color: #1f2225;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    color: #defe47;
+    font-size: 18px;
+    font-family: "Arial";
+    padding: 10px 10px;
+    border-radius: 3px;
+    border: 1px solid #defe47;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .button-container.ButtonType2 a {
+    color: #defe47;
+  }
+
+.ButtonType2:hover {
+    background-color: #000000;
+    color: #fff;
+}
