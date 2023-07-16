@@ -72,11 +72,17 @@
     border: 1px solid black;
     display: inline-block;
     cursor: pointer;
+    padding: 10px;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
     margin-bottom: 30px;
   }
 
   .button-container:hover {
-    background-color: yellow;
+    background-color: #28b2fb;
   }
   .button-container a {
     color: black;
@@ -86,12 +92,12 @@
     background-color: #1f2225;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    color: #defe47;
+    color: #3498db;
     font-size: 18px;
     font-family: "Arial";
     padding: 10px 10px;
     border-radius: 3px;
-    border: 1px solid #defe47;
+    border: 1px solid #3498db;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: inline-block;
@@ -99,10 +105,10 @@
   }
 
   .button-container.ButtonType2 a {
-    color: #defe47;
+    color: turquoise;
   }
 
 .ButtonType2:hover {
     background-color: #000000;
-    color: #fff;
+    color: turquoise;
 }

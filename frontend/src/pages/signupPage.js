@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RedirectButton from "../components/redirectButton";
+import "../styling/SignUp.css"
 
 function SignupPage() {
   const [email, setEmail] = useState('');
@@ -33,9 +34,8 @@ function SignupPage() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-
+    <div className="App">
+      <h1 className="abstractivetitle">Abstractive Health</h1>
       <nav>
         <RedirectButton buttonText="Home" buttonUrl="/home" />
         <RedirectButton buttonText="Upload" buttonUrl="/upload" />
@@ -43,28 +43,32 @@ function SignupPage() {
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
       </nav>
-        <h2>Signup Page</h2>
-
+      <div className='container'>
+      <div className="signup">
+        <form onSubmit={handleSubmit}>
+          <h2>Sign Up Page</h2>
         <label htmlFor="email">Email:</label>
         <input
           id="email"
           type="email"
-          ref={emailRef}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <label htmlFor="password">Password:</label>
         <input
           id="password"
           type="password"
-          ref={passwordRef}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
-        <button type="submit">Signup</button>
+        <button type="submit">Sign Up</button>
       </form>
+      </div>
+      </div>
     </div>
   );
 }

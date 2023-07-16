@@ -46,13 +46,21 @@ const UploadQuestion = () => {
       console.error("Error uploading question:", error);
     }
   };
-  
+
 
   return (
     <div>
       <div className="upload" style={containerStyle}>
         <textarea
-          style={{ width: "70%", marginLeft: "10vw", fontSize: "16px" }}
+            style={{
+              width: "70%",
+              marginLeft: "10VW",
+              fontSize: "16px",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #3498db;",
+              resize: "vertical",
+            }}
           type="text"
           value={question}
           onChange={handleQuestionChange}
@@ -60,7 +68,7 @@ const UploadQuestion = () => {
           cols="50"
         />
         <button
-            style={{ ...buttonStyle, backgroundColor: "#4CAF50" }}
+            style={{ ...buttonStyle, backgroundColor: "#3498db", marginLeft: "2%" }}
             onClick={() => handleSubmit(question)}
           >
             Submit
