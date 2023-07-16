@@ -36,6 +36,7 @@ const AdminPage = () => {
         const { questions, file_names, finished } = jsonData;
 
         return (
+            <div style={styles.tableContainer}>
             <table style={styles.table}>
                 <thead>
                     <tr style={styles.headerRow}>
@@ -62,6 +63,7 @@ const AdminPage = () => {
                     ))}
                 </tbody>
             </table>
+            </div>
         );
     };
 
@@ -148,6 +150,7 @@ const AdminPage = () => {
     };
 
     const getFileAccessTable = () => (
+        <div style={styles.tableContainer}>
         <table style={styles.table}>
             <thead>
                 <tr style={styles.headerRow}>
@@ -170,6 +173,7 @@ const AdminPage = () => {
                 ))}
             </tbody>
         </table>
+        </div>
     );
 
     return (
@@ -185,7 +189,7 @@ const AdminPage = () => {
                 <RedirectButton buttonText="Admin" buttonUrl="/admin" />
             </nav>
             <div>
-                <label htmlFor="userSelect">Select User:</label>
+                <label htmlFor="userSelect" style={{"color": "white"}}>Select User:  </label>
                 <select id="userSelect" value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
                     <option value="">-- Select User --</option>
                     {users.map((user, index) => (
@@ -193,7 +197,9 @@ const AdminPage = () => {
                     ))}
                 </select>
             </div>
+            <h1 style={{"fontSize": "20px", "textAlign": "left", "marginLeft": "12%", "fontWeight": "600", "color": "white"}}>Access Table:</h1>
             {selectedUser && getFileAccessTable()}
+            <h1 style={{"fontSize": "20px", "textAlign": "left", "marginLeft": "12%", "fontWeight": "600",  "color": "white"}}>Review Table:</h1>
             {getAnswerTable()}
 
         </div>
@@ -203,34 +209,45 @@ const AdminPage = () => {
 // Define styles outside of the AdminPage component
 const styles = {
     container: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "80vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      height: "100vh",
+      backgroundColor: "#222",
+      color: "#fff",
+      fontFamily: "Arial, sans-serif",
     },
+    tableContainer: {
+        paddingLeft: "10%",
+        paddingBottom: "5%",
+      },
     table: {
-        width: "80%",
-        borderCollapse: "collapse",
+      width: "80%",
+      borderCollapse: "collapse",
+      margin: "20px",
+      marginBottom: "40px",
     },
     headerRow: {
-        backgroundColor: "#A9A9A9",
+      backgroundColor: "#333",
+      color: "white"
     },
     headerCell: {
-        padding: "10px",
-        border: "1px solid #000",
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#ffffff",
+      padding: "10px",
+      border: "1px solid #fff",
+      fontWeight: "bold",
+      textAlign: "center",
+      color: "white"
     },
     row: {
-        backgroundColor: "#D3D3D3",
+      backgroundColor: "#444",
     },
     cell: {
-        padding: "10px",
-        border: "1px solid #000",
-        textAlign: "center",
+      padding: "10px",
+      border: "1px solid #fff",
+      textAlign: "center",
+      color: "white"
     },
-};
+  };
 
 
 export default AdminPage;

@@ -9,10 +9,10 @@ function Download() {
 
   const jsonToCsv = (jsonObj) => {
     let rows = [];
-  
+
     for (let file in jsonObj.file_names) {
       if (!jsonObj.file_names.hasOwnProperty(file)) continue;
-  
+
       jsonObj.file_names[file].forEach((answer, i) => {
         let row = {};
         row['FileName'] = file;
@@ -22,17 +22,17 @@ function Download() {
         rows.push(row);
       });
     }
-  
+
     // Convert object to CSV string
     const csv = rows.map(row => {
       return Object.values(row).map(val => JSON.stringify(val)).join(',');
     }).join('\r\n');
-  
+
     // Add header
     const header = Object.keys(rows[0]).join(',') + '\r\n';
     return header + csv;
   };
-  
+
 
   const getEverything = async () => {
     const response = await fetch("http://localhost:3000/api/everything", {
@@ -60,7 +60,7 @@ function Download() {
 
   return (
     <button
-      style={{ ...buttonStyle, backgroundColor: "#4CAF50" }}
+      style={{ ...buttonStyle }}
       onClick={handleDownload}
     >
       Download CSV
@@ -72,11 +72,15 @@ const buttonStyle = {
   border: "none",
   color: "white",
   padding: "10px 20px",
+  marginBottom: "10px",
+  marginLeft: "40%",
   textAlign: "center",
+  justifyContent: "left",
   textDecoration: "none",
   display: "inline-block",
   fontSize: "16px",
   cursor: "pointer",
   borderRadius: "12px",
+  backgroundColor: "#28b2fb"
 };
 export default Download;

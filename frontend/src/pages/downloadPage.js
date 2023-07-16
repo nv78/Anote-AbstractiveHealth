@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import RedirectButton from "../components/redirectButton";
-import Download from "../components/download";
 import Table from "../components/table.js";
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +38,6 @@ const DownloadPage = () => {
         <RedirectButton buttonText="Admin" buttonUrl="/admin" />
       </nav>
       <Table />
-      <Download />
     </div>
   );
 };
