@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-
+import "../styling/Login.css"
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -31,46 +31,49 @@ const LoginPage = () => {
             }
         })
     }
-
     return (
+        <div className="container">
         <div className="login">
-            <h2>Login Form</h2>
-            <div>
-                <label>Email</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-            </div>
-            
-            <div>
-                <label>Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </div>
+          <h2>Login Form</h2>
+          <div>
+            <label>Email</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-            <div>
-                <button type="submit" onClick={handleSubmit}>
-                    Login
-                </button>
-            </div>
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-            <div>
-                <p>To create a new account click <a href="/signup" style={{color: 'blue'}}>here</a></p>
-            </div>
+          <div>
+            <button type="submit" onClick={handleSubmit}>
+              Login
+            </button>
+          </div>
+
+          <div>
+            <p>
+              To create a new account
+              <a href="/signup"> Sign Up</a>
+            </p>
+          </div>
         </div>
-
-    )
-}
+        </div>
+      );
+    };
 
 export default LoginPage;
