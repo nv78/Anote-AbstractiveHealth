@@ -57,6 +57,7 @@ function SignupPage() {
         <input
           id="email"
           type="email"
+          ref={emailRef}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -66,6 +67,7 @@ function SignupPage() {
         <input
           id="password"
           type="password"
+          ref={passwordRef}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
