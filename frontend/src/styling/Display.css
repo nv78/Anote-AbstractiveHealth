@@ -1,0 +1,32 @@
+.file-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .file-preview {
+    padding-right: 20px;
+    margin-top: 100px;
+    margin-right: 10%;
+  }
+
+  @media screen and (max-width: 768px) {
+    .columns {
+      flex-direction: column-reverse;
+    }
+
+    .file-preview {
+      padding-right: 0;
+      padding-bottom: 20px;
+      margin-top: 20px;
+      margin-right: 0;
+    }
+  }
+
+  .file-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+  }

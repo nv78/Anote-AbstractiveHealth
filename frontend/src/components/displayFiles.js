@@ -3,6 +3,7 @@ import fetch from "cross-fetch";
 import QuestionAndAnswer from "../components/questionAndAnswer";
 import Cookies from 'js-cookie';
 import "bulma/css/bulma.css";
+import "../styling/Display.css"; // Import custom CSS file for styling
 
 const DisplayFile = () => {
   const [fileNames, setFileNames] = useState([]);
@@ -119,25 +120,18 @@ const DisplayFile = () => {
 
 
   return (
-    <div className="container">
-      <br />
-      <h2>{fileNames[selectedFileIndex]}</h2>
-      {/*<label>
-        <input type="checkbox" checked={isFinished} onChange={handleCheckboxChange} />
-        Finished
-      </label>*/}
-      <button onClick={handlePrevious} disabled={selectedFileIndex === 0}>
+    <div className="file-container">
+      <div className="columns">
+        <div className="column is-8 file-preview">{filePreview}</div>
+        <div className="column is-4">
+          <QuestionAndAnswer filename={fileNames[selectedFileIndex]} />
+          <h2>{fileNames[selectedFileIndex]}</h2>
+          <button onClick={handlePrevious} disabled={selectedFileIndex === 0}>
           Previous
         </button>
         <button onClick={handleNext} disabled={selectedFileIndex === fileNames.length - 1}>
           Next
         </button>
-      <br />
-      <br />
-      <div className="columns">
-        <div className="column is-7">{filePreview}</div>
-        <div className="column is-5">
-          <QuestionAndAnswer filename={fileNames[selectedFileIndex]} />
         </div>
       </div>
     </div>
