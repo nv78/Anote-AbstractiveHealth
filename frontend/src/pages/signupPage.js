@@ -53,7 +53,7 @@ function SignupPage() {
       <div className="signup">
         <form onSubmit={handleSubmit}>
           <h2>Sign Up Page</h2>
-        <label htmlFor="email">Email:</label>
+        <label htmlFor="email" style={{textAlign: "left"}}>Email:</label>
         <input
           id="email"
           type="email"
@@ -63,7 +63,7 @@ function SignupPage() {
           required
         />
 
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password" style={{textAlign: "left"}}>Password:</label>
         <input
           id="password"
           type="password"

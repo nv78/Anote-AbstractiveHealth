@@ -105,7 +105,7 @@ const DisplayFile = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fileName: fileNames[selectedFileIndex] }),
     };
-  
+
     try {
       const response = await fetch(`http://localhost:3000${endpoint}`, options);
       if (!response.ok) {
@@ -116,22 +116,22 @@ const DisplayFile = () => {
       console.log("Error:", error);
     }
   };
-  
+
 
   return (
     <div className="container">
-      <button onClick={handlePrevious} disabled={selectedFileIndex === 0}>
-        Previous
-      </button>
-      <button onClick={handleNext} disabled={selectedFileIndex === fileNames.length - 1}>
-        Next
-      </button>
       <br />
       <h2>{fileNames[selectedFileIndex]}</h2>
-      <label>
+      {/*<label>
         <input type="checkbox" checked={isFinished} onChange={handleCheckboxChange} />
         Finished
-      </label>
+      </label>*/}
+      <button onClick={handlePrevious} disabled={selectedFileIndex === 0}>
+          Previous
+        </button>
+        <button onClick={handleNext} disabled={selectedFileIndex === fileNames.length - 1}>
+          Next
+        </button>
       <br />
       <br />
       <div className="columns">

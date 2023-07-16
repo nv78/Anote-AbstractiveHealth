@@ -10,16 +10,25 @@ const UploadButton = () => {
   };
 
   const handleSubmit = async () => {
-    const formData = new FormData();
+    var formData = new FormData();
+    console.log("selectedFiles")
+    console.log(selectedFiles)
     selectedFiles.forEach((file) => {
       formData.append("files", file);
     });
+
+    // add a sleep for 2 seconds here
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log("formData")
+    console.log(formData)
+
 
     const response = await fetch(`http://localhost:3000/api/upload?session_token=${session_token}`, {
       method: "POST",
       body: formData,
     });
-
+    console.log("response")
+    console.log(response)
     if (response.ok) {
       console.log("Files uploaded successfully");
       setSelectedFiles([]); // Clear the selected files
