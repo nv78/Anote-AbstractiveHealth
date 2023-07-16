@@ -63,23 +63,29 @@ const UploadButton = () => {
 // CSS styles
 const labelStyle = {
   display: "inline-block",
-  backgroundColor: "#4CAF50",
+  backgroundColor: "#3498db",
   color: "white",
   padding: "10px 20px",
   fontSize: "14px",
+  fontFamily: "Helvetica Neue",
+  fontWeight: "600",
   cursor: "pointer",
   borderRadius: "4px",
+  transition: "background-color 0.2s ease-in-out",
 };
 
 const buttonStyle = {
   display: "inline-block",
   backgroundColor: "#808080",
   color: "white",
-  padding: "10px 20px",
+  padding: "10px 18px",
   border: "none",
   fontSize: "14px",
+  fontFamily: "Helvetica Neue",
+  fontWeight: "600",
   borderRadius: "4px",
   cursor: "pointer",
+  transition: "background-color 0.2s ease-in-out",
 };
 
 const containerStyle = {
@@ -90,5 +96,7 @@ const containerStyle = {
 const stepStyle = {
   marginRight: "10px",
   fontSize: "16px",
+  fontFamily: "Helvetica Neue",
+  fontWeight: "600"
 };
 export default UploadButton;
