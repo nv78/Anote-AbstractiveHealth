@@ -51,7 +51,7 @@ app.post("/api/signup", (req, res) => {
       res.status(401).send("User already exists");
       return;
     }
-    pw.addUser(username, password, true);
+    pw.addUser(username, password, false);
     res.send("Successfully signed up");
 });
 

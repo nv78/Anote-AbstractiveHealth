@@ -11,7 +11,7 @@ const LoginButton = () => {
 
   useEffect(() => {
     setIsSignedIn(cookies.session_token !== undefined);
-  }, [cookies]);
+  }, [cookies, isSignedIn]);
 
   const handleClick = () => {
     if (isSignedIn) {
@@ -22,6 +22,7 @@ const LoginButton = () => {
           navigate('/');
           Cookies.remove('session_token')
           setCookie(null)
+          window.location.reload();
         }
       });
     } else {
