@@ -69,124 +69,105 @@ const QuestionAndAnswer = (props) => {
   };
 
   return (
-    <div className="container">
-      <table className="table is-striped is-hoverable is-fullwidth">
-        <thead>
-          <tr>
-            <th>Question</th>
-            <th>Answer</th>
-            <th>Update/Add Answer</th>
-            {/* <th>Delete</th> */}
-          </tr>
-        </thead>
-        <tbody>
-          {questions_and_answers.map((q_and_a) => (
-            <tr key={q_and_a.question}>
-              <td>
-                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
-                  {q_and_a.question}
-                </div>
-              </td>
-              <td>
-                <div style={{ width: "9vw", overflowWrap: "break-word" }}>
-                  {q_and_a.answer}
-                </div>
-              </td>
-              <td>
-                <div className="field">
-                  <div className="control">
-                    <input
-                      className="input is-small"
-                      style={{
-                        width: "80%",
-                        overflow: "auto",
-                      }}
-                      type="text"
-                      value={answer[q_and_a.question] || ""}
-                      onChange={(event) =>
-                        handleAnswerChange(q_and_a.question, event)
-                      }
-                    />
-                    <button
-                      style={{ width: "20%" }}
-                      className="button is-small is-link"
-                      onClick={() =>
-                        handleUpdateAnswer(
-                          q_and_a.question,
-                          answer[q_and_a.question],
-                          filename
-                        )
-                      }
-                    >
-                      <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    // <div className="container">
+    //   <table className="table is-striped is-hoverable is-fullwidth">
+    //     <thead>
+    //       <tr>
+    //         <th>Question</th>
+    //         <th>Answer</th>
+    //         <th>Update/Add Answer</th>
+    //         {/* <th>Delete</th> */}
+    //       </tr>
+    //     </thead>
+    //     <tbody>
+    //       {questions_and_answers.map((q_and_a) => (
+    //         <tr key={q_and_a.question}>
+    //           <td>
+    //             <div style={{ width: "9vw", overflowWrap: "break-word" }}>
+    //               {q_and_a.question}
+    //             </div>
+    //           </td>
+    //           <td>
+    //             <div style={{ width: "9vw", overflowWrap: "break-word" }}>
+    //               {q_and_a.answer}
+    //             </div>
+    //           </td>
+    //           <td>
+    //             <div className="field">
+    //               <div className="control">
+    //                 <input
+    //                   className="input is-small"
+    //                   style={{
+    //                     width: "80%",
+    //                     overflow: "auto",
+    //                   }}
+    //                   type="text"
+    //                   value={answer[q_and_a.question] || ""}
+    //                   onChange={(event) =>
+    //                     handleAnswerChange(q_and_a.question, event)
+    //                   }
+    //                 />
+    //                 <button
+    //                   style={{ width: "20%" }}
+    //                   className="button is-small is-link"
+    //                   onClick={() =>
+    //                     handleUpdateAnswer(
+    //                       q_and_a.question,
+    //                       answer[q_and_a.question],
+    //                       filename
+    //                     )
+    //                   }
+    //                 >
+    //                   <FontAwesomeIcon icon={faArrowRight} />
+    //                 </button>
+    //               </div>
+    //             </div>
+    //           </td>
+    //         </tr>
+    //       ))}
+    //     </tbody>
+    //   </table>
+    // </div>
+    <div className="text-white h-2/3 bg-gray-800 rounded-r-lg overflow-auto">
+      {questions_and_answers.map((q_and_a) => (
+        <>
+          {console.log(q_and_a)}
+          <div key={q_and_a.question} className="p-4">
+            <div className="flex flex-row">
+              <span className="w-5 h-5 -mr-3 mt-2 bg-slate-700 transform rotate-45"></span>
+              <p className="bg-slate-700 p-4 rounded-lg">{q_and_a.question}</p>
+            </div>
+
+            <div className="flex flex-row items-center mt-5">
+              <textarea
+                id="message"
+                rows="12"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Write your answer here..."
+                value={q_and_a.answer || ""}
+                onChange={(event) =>
+                  handleAnswerChange(q_and_a.question, event)
+                }
+              ></textarea>
+
+              <button
+                className="button bg-slate-800 text-white w-1/5 ml-4"
+                onClick={() =>
+                  handleUpdateAnswer(
+                    q_and_a.question,
+                    answer[q_and_a.question],
+                    filename
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+            </div>
+          </div>
+        </>
+      ))}
     </div>
   );
 };
 
 export default QuestionAndAnswer;
-
-
-//   return (
-  //     <div className="container">
-  //       <table className="table is-striped is-hoverable is-fullwidth">
-  //         <thead>
-  //           <tr>
-  //             <th>Question</th>
-  //             <th>Answer</th>
-  //             <th>Update Answer</th>
-  //             <th>Action</th>
-  //           </tr>
-  //         </thead>
-  //         <tbody>
-  //           {questions_and_answers.map((q_and_a) => (
-  //             <tr key={q_and_a.question}>
-  //               <td>{q_and_a.question}</td>
-  //               <td>{q_and_a.answer}</td>
-  //               <td>
-  //                 <div className="field">
-  //                   <div className="control">
-  //                     <input
-  //                       className="input is-small"
-  //                       type="text"
-  //                       value={answer[q_and_a.question] || ""}
-  //                       onChange={(event) =>
-  //                         handleAnswerChange(q_and_a.question, event)
-  //                       }
-  //                     />
-  //                   </div>
-  //                 </div>
-  //               </td>
-  //               <td>
-  //                 <button
-  //                   className="button is-small is-link"
-  //                   onClick={() =>
-  //                     handleUpdateAnswer(
-  //                       q_and_a.question,
-  //                       answer[q_and_a.question],
-  //                       filename
-  //                     )
-  //                   }
-  //                 >
-  //                   Update Answer
-  //                 </button>
-  //                 <button
-  //                   className="button is-small is-danger"
-  //                   onClick={() => handleDelete(q_and_a.question)}
-  //                 >
-  //                   Delete
-  //                 </button>
-  //               </td>
-  //             </tr>
-  //           ))}
-  //         </tbody>
-  //       </table>
-  //     </div>
-  //   );
