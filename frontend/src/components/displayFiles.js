@@ -216,27 +216,38 @@ const DisplayFile = () => {
                       id="message"
                       rows="15"
                       class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Write your answer here..."
+                      placeholder={
+                        q_and_a.answer || "Write your answer here..."
+                      }
                       value={answer[q_and_a.question] || ""}
                       onChange={(event) =>
                         handleAnswerChange(q_and_a.question, event)
                       }
                     ></textarea>
-
-                    <button
-                      className="button bg-slate-800 text-white hover:text-black hover:bg-white"
-                      onClick={() =>
-                        handleUpdateAnswer(
-                          q_and_a.question,
-                          answer[q_and_a.question],
-                          filename
-                        )
-                      }
-                    >
-                      {" "}
-                      Submit
-                      <FontAwesomeIcon className="pl-2" icon={faArrowRight} />
-                    </button>
+                    <div className="flex flex-row">
+                      <button
+                        className="text-white bg-slate-400 p-2 rounded-md mx-2"
+                        onClick={handlePrevious}
+                        disabled={selectedFileIndex === 0}
+                      >
+                        <FontAwesomeIcon className="pr-2" icon={faArrowLeft} />
+                        Previous
+                      </button>
+                      <button
+                        className="button bg-slate-800 text-white hover:text-black hover:bg-white"
+                        onClick={() =>
+                          handleUpdateAnswer(
+                            q_and_a.question,
+                            answer[q_and_a.question],
+                            filename
+                          )
+                        }
+                      >
+                        {" "}
+                        Confirm
+                        <FontAwesomeIcon className="pl-2" icon={faArrowRight} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>
