@@ -37,7 +37,7 @@ class FileUploadButton extends React.Component {
           ref={this.inputRef}
           style={{ display: 'none' }}
           onChange={this.handleFileChange}
-          accept=".pdf,.txt" // Limit the file input to only PDF and TXT files
+          accept=".pdf,.txt,.csv" // Limit the file input to only PDF and TXT files
           multiple // Allow the user to select multiple files
         />
         <button onClick={this.handleButtonClick}>Upload Files</button>

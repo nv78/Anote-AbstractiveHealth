@@ -7,6 +7,7 @@ let database = {
     "questions" : [],
     "file_names" : {},
     "finished" : [],
+    "review" : {},
 }
 
 // {
@@ -16,6 +17,16 @@ let database = {
 //         "file_name2": ["answer1", "answer2"],
 //     },
 //     finished: ["file_name1", "file_name2"],
+//     review: {
+//         "file_name1": {
+//             thumbs_up: 0,
+//             thumbs_down: 0
+//         },
+//         "file_name2": {
+//             thumbs_up: 0,
+//             thumbs_down: 0
+//         },
+//     }
 // }
 
 try {
@@ -32,6 +43,9 @@ try {
 }
 
 // Database
+/**
+ * Save the current state of the database to a file.
+ */
 const saveDatabase = () => {
     try {
         console.log('Saving database...');
@@ -43,10 +57,14 @@ const saveDatabase = () => {
     }
 }
 
+/**
+ * Get all filenames in the 'uploads' directory with allowed file types.
+ * @return {Array} an array of filenames with allowed file types.
+ */
 const getAllFileNames = () => {
     try {
         const all_file_names = fs.readdirSync(path.join(__dirname, '../uploads'));
-        const allowedFileTypes = ['.txt', '.pdf'];
+        const allowedFileTypes = ['.txt', '.pdf', '.csv'];
         return all_file_names.filter(file => allowedFileTypes.includes(path.extname(file)));
     } catch (error) {
         console.error(`Error while getting all filenames: ${error}`);
@@ -54,6 +72,9 @@ const getAllFileNames = () => {
     }
 }
 
+/**
+ * Initialize the database with all filenames in the 'uploads' directory.
+ */
 const initDatabase = () => {
     try {
         const all_file_names = getAllFileNames();
@@ -65,6 +86,7 @@ const initDatabase = () => {
             "questions" : [],
             "file_names" : file_names_obj,
             "finished" : [],
+            "review" : {},
         }
         saveDatabase();
     } catch (error) {
@@ -72,6 +94,9 @@ const initDatabase = () => {
     }
 }
 
+/**
+ * Update the database with the current filenames in the 'uploads' directory.
+ */
 const updateDatabase = () => {
     try {
         const all_file_names = getAllFileNames();
@@ -80,14 +105,24 @@ const updateDatabase = () => {
             if (!database["file_names"][file_name]) {
                 database["file_names"][file_name] = answer;
             }
+            if (!database["review"][file_name]) {
+                database["review"][file_name] = {
+                    thumbs_up: 0,
+                    thumbs_down: 0
+                }
+            }
         }
+        console.log("Updated database")
         saveDatabase();
     } catch (error) {
         console.error(`Error while updating database: ${error}`);
     }
 }
 
-// Create
+/**
+ * Create a new question in the database.
+ * @param {String} question - the question to be added.
+ */
 const createQuestion = (question) => {
     try {
         if (database.questions.includes(question)) {
@@ -104,8 +139,10 @@ const createQuestion = (question) => {
     }
 }
 
-
-// Delete
+/**
+ * Delete a question and its associated answers from the database.
+ * @param {String} question - the question to be deleted.
+ */
 const deleteQuestionAndAnswer = (question) => {
     try {
         const question_index = database["questions"].indexOf(question);
@@ -123,7 +160,12 @@ const deleteQuestionAndAnswer = (question) => {
     }
 }
 
-// Update
+/**
+ * Update the answer of a specific question in a specific file.
+ * @param {String} file_name - the name of the file.
+ * @param {String} question - the question to be updated.
+ * @param {String} answer - the new answer.
+ */
 const updateAnswer = (file_name, question, answer) => {
     try {
         const question_index = database["questions"].indexOf(question);
@@ -137,6 +179,10 @@ const updateAnswer = (file_name, question, answer) => {
     }
 }
 
+/**
+ * Add a filename to the 'finished' list in the database.
+ * @param {String} file_name - the name of the file.
+ */
 const addFinished = (file_name) => {
     try {
         database["finished"].push(file_name);
@@ -146,6 +192,10 @@ const addFinished = (file_name) => {
     }
 }
 
+/**
+ * Remove a filename from the 'finished' list in the database.
+ * @param {String} file_name - the name of the file.
+ */
 const deleteFinished = (file_name) => {
     try {
         const index = database["finished"].indexOf(file_name);
@@ -159,7 +209,10 @@ const deleteFinished = (file_name) => {
     }
 }
 
-// Get
+/**
+ * Get all the data from the database.
+ * @return {Object} an object containing all data from the database.
+ */
 const getEverything = () => {
     try {
         return database;
@@ -169,6 +222,34 @@ const getEverything = () => {
     }
 }
 
+const thumbsUp = (file_name) => {
+    try {
+        database["review"][file_name]["thumbs_up"] = 1;
+        if (database["review"][file_name]["thumbs_down"] > 0) {
+            database["review"][file_name]["thumbs_down"] = 0;
+        }
+        saveDatabase();
+    } catch (error) {
+        console.error(`Error while thumbs up: ${error}`);
+    }
+}
+
+const thumbsDown = (file_name) => {
+    try {
+        database["review"][file_name]["thumbs_down"] = 1;
+        if (database["review"][file_name]["thumbs_up"] > 0) {
+            database["review"][file_name]["thumbs_up"] = 0;
+        }
+        saveDatabase();
+    } catch (error) {
+        console.error(`Error while thumbs down: ${error}`);
+    }
+}
+
+/**
+ * Get all filenames in the 'finished' list from the database.
+ * @return {Array} an array of all 'finished' filenames.
+ */
 const getAllFinishedFiles = () => {
     try {
         return JSON.stringify(database["finished"]);
@@ -178,6 +259,10 @@ const getAllFinishedFiles = () => {
     }
 }
 
+/**
+ * Get all questions from the database.
+ * @return {Array} an array of all questions.
+ */
 const getAllQuestions = () =>  {
     try {
         // return stringified array of all questions
@@ -188,6 +273,11 @@ const getAllQuestions = () =>  {
     }
 }
 
+/**
+ * Get all questions and answers associated with a specific filename from the database.
+ * @param {String} file_name - the name of the file.
+ * @return {Array} an array of objects, each containing a question and its associated answer.
+ */
 const getAllQuestionAndAnswerFromFileName = (file_name) => {
     try {
         if (!database["file_names"][file_name]) {
@@ -221,6 +311,8 @@ module.exports = {
     addFinished,
     deleteFinished,
     getAllFinishedFiles,
+    thumbsUp,
+    thumbsDown,
 }
 
 

@@ -25,10 +25,6 @@ const AdminPage = () => {
         getEverything();
     }, [selectedUser]);
 
-    // useEffect(() => {
-
-    // }, []);
-
     const getAnswerTable = () => {
         if (!jsonData) {
             return null;
@@ -149,8 +145,35 @@ const AdminPage = () => {
         }
     };
 
+    const handleCheckAll = async () => {
+        // Iterate over all file names
+        for (const fileName of fileNames) {
+            // If the user already has access to this file, continue to the next file
+            if (userFileNames.includes(fileName)) continue;
+
+            // Add this file to the user's access
+            const response = await fetch(`http://localhost:3000/api/addAllowedFile`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: selectedUser,
+                    fileName: fileName,
+                }),
+            });
+            if (!response.ok) {
+                console.error("Failed to add file access");
+            }
+        }
+
+        // After iterating through all files, refresh the file names by user
+        getFileNamesByUser();
+    };
+
     const getFileAccessTable = () => (
         <div style={styles.tableContainer}>
+        <button onClick={() => handleCheckAll()}>Check All</button>
         <table style={styles.table}>
             <thead>
                 <tr style={styles.headerRow}>
@@ -187,6 +210,7 @@ const AdminPage = () => {
                 <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
                 <RedirectButton buttonText="Download" buttonUrl="/download" />
                 <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+                <RedirectButton buttonText="Review" buttonUrl="/review" />
             </nav>
             <div>
                 <label htmlFor="userSelect" style={{"color": "white"}}>Select User:  </label>

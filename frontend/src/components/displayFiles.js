@@ -12,6 +12,7 @@ const DisplayFile = () => {
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const [filePreview, setFilePreview] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const session_token = Cookies.get("session_token");
 
   const [questions_and_answers, setquestions_and_answers] = useState([]);
@@ -20,6 +21,29 @@ const DisplayFile = () => {
   const filename = fileNames[selectedFileIndex];
   let length = questions_and_answers.length;
 
+  useEffect(() => {
+    getQuestionsAndAnswers();
+    checkAdmin();
+  }, [filename]);
+
+  useEffect(() => {
+    getFileNames();
+  }, []);
+
+  useEffect(() => {
+    fetchFinishedFiles();
+  }, [fileNames, selectedFileIndex]);
+
+  const checkAdmin = async () => {
+    try {
+        const response = await fetch(`http://localhost:3000/api/isAdmin?session_token=${session_token}`);
+        if (response.ok) {
+            setIsAdmin(true);
+        }
+    } catch (error) {
+        console.log("Error:", error);
+    }
+};
   const getQuestionsAndAnswers = async () => {
     try {
       const response = await fetch(
@@ -34,14 +58,36 @@ const DisplayFile = () => {
       }
       const data = await response.json();
       setquestions_and_answers(data);
+      // load original answers into state
+      const originalAnswers = {};
+      data.forEach((q_and_a) => {
+        if(q_and_a.answer) originalAnswers[q_and_a.question] = q_and_a.answer;
+      });
+      setAnswer(originalAnswers);
     } catch (error) {
       console.log("Error:", error);
     }
   };
 
-  useEffect(() => {
-    getQuestionsAndAnswers();
-  }, [filename, length, answer]);
+  // const getQuestionsAndAnswers = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:3000/api/qa?fileName=${filename}`,
+  //       {
+  //         method: "GET",
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       const errorMessage = await response.text();
+  //       throw new Error(`Unable to fetch questions: ${errorMessage}`);
+  //     }
+  //     const data = await response.json();
+  //     setquestions_and_answers(data);
+  //   } catch (error) {
+  //     console.log("Error:", error);
+  //   }
+  // };
+
 
   const handleAnswerChange = (question, event) => {
     setAnswer((prevAnswers) => ({
@@ -55,7 +101,7 @@ const DisplayFile = () => {
       console.error("No answer for question: " + question);
       return;
     }
-
+  
     const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
@@ -69,13 +115,13 @@ const DisplayFile = () => {
     });
     if (response.ok) {
       console.log("Answer updated successfully");
-      getQuestionsAndAnswers();
-      setAnswer((prevAnswers) => ({ ...prevAnswers, [question]: "" }));
+      setAnswer((prevAnswers) => ({ ...prevAnswers, [question]: answer })); // Just update the answer for the specific question in the state, not empty it
     } else {
       console.log("Answer update failed");
     }
     handleNext();
   };
+  
 
   const getFileNames = async () => {
     try {
@@ -113,14 +159,6 @@ const DisplayFile = () => {
     }
   };
 
-  useEffect(() => {
-    getFileNames();
-  }, []);
-
-  useEffect(() => {
-    fetchFinishedFiles();
-  }, [fileNames, selectedFileIndex]);
-
   const handleFileChange = async (filename) => {
     const response = await fetch(
       `http://localhost:3000/api/files?filename=${encodeURIComponent(filename)}`
@@ -150,9 +188,27 @@ const DisplayFile = () => {
           setFilePreview(<pre>{text}</pre>);
         };
         reader.readAsText(file);
+      } else if (fileType === "csv") {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const csvData = event.target.result;
+          const lines = csvData.split("\n");
+          const rows = lines.map(line => line.split(","));
+          setFilePreview(
+            <table>
+              {rows.map(row => (
+                <tr>
+                  {row.map(cell => <td>{cell}</td>)}
+                </tr>
+              ))}
+            </table>
+          );
+        };
+        reader.readAsText(file);
       }
     }
   };
+  
 
   const handlePrevious = () => {
     if (selectedFileIndex > 0) {
@@ -190,6 +246,43 @@ const DisplayFile = () => {
     }
   };
 
+  const handleThumbsUp = async (question, filename) => {
+    const response = await fetch(`http://localhost:3000/api/thumbsUp`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: question,
+        fileName: filename,
+      }),
+    });
+    if (response.ok) {
+      console.log("Thumbs up updated successfully");
+    } else {
+      console.log("Thumbs up update failed");
+    }
+  };
+  
+  const handleThumbsDown = async (question, filename) => {
+    const response = await fetch(`http://localhost:3000/api/thumbsDown`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: question,
+        fileName: filename,
+      }),
+    });
+    if (response.ok) {
+      console.log("Thumbs down updated successfully");
+    } else {
+      console.log("Thumbs down update failed");
+    }
+  };
+  
+
   return (
     <div className="mx-auto w-3/4 my-5">
       <div className="flex flex-row">
@@ -202,7 +295,6 @@ const DisplayFile = () => {
             </h2>
             {questions_and_answers.map((q_and_a) => (
               <>
-                {console.log(q_and_a)}
                 <div key={q_and_a.question} className="p-4">
                   <div className="flex flex-row">
                     <span className="w-5 h-5 -mr-3 mt-2 bg-slate-700 transform rotate-45"></span>
@@ -212,18 +304,22 @@ const DisplayFile = () => {
                   </div>
 
                   <div className="flex flex-col items-center mt-5">
-                    <textarea
-                      id="message"
-                      rows="15"
-                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={
-                        q_and_a.answer || "Write your answer here..."
-                      }
-                      value={answer[q_and_a.question] || ""}
-                      onChange={(event) =>
-                        handleAnswerChange(q_and_a.question, event)
-                      }
-                    ></textarea>
+                  <textarea
+                    id="message"
+                    rows="15"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder={q_and_a.answer ? "" : "Write your answer here..."}
+                    value={
+                      answer.hasOwnProperty(q_and_a.question)
+                        ? answer[q_and_a.question]
+                        : q_and_a.answer || ""
+                    }
+                    
+                    onChange={(event) =>
+                      handleAnswerChange(q_and_a.question, event)
+                    }
+                  ></textarea>
+
                     <div className="flex flex-row">
                       <button
                         className="text-white bg-slate-400 p-2 rounded-md mx-2"
@@ -248,6 +344,22 @@ const DisplayFile = () => {
                         <FontAwesomeIcon className="pl-2" icon={faArrowRight} />
                       </button>
                     </div>
+                    {isAdmin && (
+                      <button
+                        className="button bg-slate-800 text-white hover:text-black hover:bg-white mx-2"
+                        onClick={() => handleThumbsUp(q_and_a.question, filename)}
+                      >
+                        Thumbs Up
+                      </button>
+                    )}
+                    {isAdmin && (
+                      <button
+                        className="button bg-slate-800 text-white hover:text-black hover:bg-white mx-2"
+                        onClick={() => handleThumbsDown(q_and_a.question, filename)}
+                      >
+                        Thumbs Down
+                      </button>
+                    )}
                   </div>
                 </div>
               </>

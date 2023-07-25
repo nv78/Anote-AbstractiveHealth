@@ -15,6 +15,7 @@ const CustomizePage = () => {
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
         <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <RedirectButton buttonText="Review" buttonUrl="/review" />
       </nav>
       <br />
       <h3 style={{"fontSize": "20px", "textAlign": "left", "marginLeft": "10%", "fontWeight": "600"}}>Add Your Questions Here:</h3>

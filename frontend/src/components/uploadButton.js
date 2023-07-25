@@ -47,7 +47,7 @@ const UploadButton = () => {
       <input
         type="file"
         multiple
-        accept=".txt,.pdf"
+        accept=".txt,.pdf,.csv"
         onChange={handleFileChange}
         style={{ display: "none" }} // Hide the file input element
         id="fileUpload" // Add an ID for label 'for' attribute
