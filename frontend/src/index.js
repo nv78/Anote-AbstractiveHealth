@@ -10,6 +10,7 @@ import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/signupPage";
 import AdminPage from "./pages/adminPage"
 import ReviewPage from "./pages/reviewPage"
+import ReviewAnnotatePage from "./pages/reviewAnnotatePage";
 import "./index.css";
 
 
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/review",
     element: <ReviewPage />,
+  },
+  {
+    path: "/reviewAnnotate",
+    element: <ReviewAnnotatePage />,
   }
 ]);
 

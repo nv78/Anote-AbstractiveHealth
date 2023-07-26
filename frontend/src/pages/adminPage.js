@@ -25,14 +25,44 @@ const AdminPage = () => {
         getEverything();
     }, [selectedUser]);
 
+    const jsonToCSV = (json) => {
+        const rows = Object.keys(json);
+        let csvStr = "data:text/csv;charset=utf-8,";
+    
+        // header
+        csvStr += "File Name,Answer" + "\n";
+    
+        // rows
+        for (const row of rows) {
+            csvStr += row + "," + Object.values(json[row]).join(",") + "\n";
+        }
+    
+        return encodeURI(csvStr);
+    };
+    
+    
+
     const getAnswerTable = () => {
         if (!jsonData) {
             return null;
         }
         const { questions, file_names, finished } = jsonData;
 
+        const downloadTable = () => {
+            const csvUrl = jsonToCSV(jsonData.file_names);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = csvUrl;
+            downloadLink.download = `${selectedUser}_review_table.csv`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+        
+        
+
         return (
             <div style={styles.tableContainer}>
+            <button onClick={downloadTable}>Download</button>
             <table style={styles.table}>
                 <thead>
                     <tr style={styles.headerRow}>
