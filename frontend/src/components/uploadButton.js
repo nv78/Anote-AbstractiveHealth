@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const UploadButton = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const session_token = Cookies.get('session_token');
+  const session_token = Cookies.get("session_token");
 
   const handleFileChange = (event) => {
     setSelectedFiles([...event.target.files]);
@@ -11,24 +11,26 @@ const UploadButton = () => {
 
   const handleSubmit = async () => {
     var formData = new FormData();
-    console.log("selectedFiles")
-    console.log(selectedFiles)
+    console.log("selectedFiles");
+    console.log(selectedFiles);
     selectedFiles.forEach((file) => {
       formData.append("files", file);
     });
 
     // add a sleep for 2 seconds here
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("formData")
-    console.log(formData)
+    console.log("formData");
+    console.log(formData);
 
-
-    const response = await fetch(`http://localhost:3000/api/upload?session_token=${session_token}`, {
-      method: "POST",
-      body: formData,
-    });
-    console.log("response")
-    console.log(response)
+    const response = await fetch(
+      `http://localhost:3000/api/upload?session_token=${session_token}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    console.log("response");
+    console.log(response);
     if (response.ok) {
       console.log("Files uploaded successfully");
       setSelectedFiles([]); // Clear the selected files
@@ -43,27 +45,41 @@ const UploadButton = () => {
 
   return (
     <div style={containerStyle}>
-      <span style={stepStyle}>Step 1 :</span>
-      <input
-        type="file"
-        multiple
-        accept=".txt,.pdf,.csv"
-        onChange={handleFileChange}
-        style={{ display: "none" }} // Hide the file input element
-        id="fileUpload" // Add an ID for label 'for' attribute
-      />
-      <label htmlFor="fileUpload" style={labelStyle}>
-        Select Files
-      </label>
-      <br />
-      <br />
+      <div className="my-4">
+        <span style={stepStyle}>Step 1 :</span>
+        <input
+          type="file"
+          multiple
+          accept=".txt,.pdf,.csv"
+          onChange={handleFileChange}
+          style={{ display: "none" }} // Hide the file input element
+          id="fileUpload" // Add an ID for label 'for' attribute
+        />
+        <label htmlFor="fileUpload" style={labelStyle}>
+          Select Files to Annotate
+        </label>
+      </div>
+      <div>
+        {selectedFiles.length > 0 && (
+          <div className="mb-4 text-white" style={fileListStyle}>
+            <div className="text-lg text-white">Selected Files:</div>
+            <ul>
+              {selectedFiles.map((file, index) => (
+                <li className="text-white mx-auto" key={index}>
+                  - {file.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <span style={stepStyle}> Step 2 :</span>
       <button
         onClick={handleSubmit}
         disabled={!selectedFiles.length}
         style={{ ...buttonStyle, backgroundColor: buttonColor }}
       >
-        Upload Files
+        Upload the selected Files
       </button>
     </div>
   );
@@ -106,6 +122,11 @@ const stepStyle = {
   marginRight: "10px",
   fontSize: "16px",
   fontFamily: "Helvetica Neue",
-  fontWeight: "600"
+  fontWeight: "600",
+};
+const fileListStyle = {
+  marginTop: "10px",
+  color: "#000000",
+  fontFamily: "Helvetica Neue",
 };
 export default UploadButton;

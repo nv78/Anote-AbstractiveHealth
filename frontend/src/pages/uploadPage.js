@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import UploadButton from "../components/uploadButton";
 import RedirectButton from "../components/redirectButton";
 import { useNavigate } from "react-router-dom";
-import Papa from 'papaparse';
+import Papa from "papaparse";
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -19,8 +19,8 @@ const UploadPage = () => {
           skipEmptyLines: true,
           complete: (results) => {
             console.log(results.data);
-            navigate('/reviewAnnotate', { state: { info: results.data } });
-          }
+            navigate("/reviewAnnotate", { state: { info: results.data } });
+          },
         });
       };
       reader.readAsText(file);
@@ -40,6 +40,7 @@ const UploadPage = () => {
         <RedirectButton buttonText="Review" buttonUrl="/review" />
       </nav>
       <UploadButton className="uploadBtn" />
+      <span className="text-white font-semibold">For Reviewing :</span>
       <input
         type="file"
         multiple
@@ -48,8 +49,8 @@ const UploadPage = () => {
         style={{ display: "none" }} // Hide the file input element
         id="csvUpload" // Add an ID for label 'for' attribute
       />
-      <label htmlFor="csvUpload" style={labelStyle}>
-        Select Files
+      <label className="ml-2" htmlFor="csvUpload" style={labelStyle}>
+        Upload CSV
       </label>
     </div>
   );
@@ -66,7 +67,7 @@ const labelStyle = {
   cursor: "pointer",
   borderRadius: "4px",
   transition: "background-color 0.2s ease-in-out",
-  marginTop: "50px"
+  marginTop: "50px",
 };
 
 export default UploadPage;
