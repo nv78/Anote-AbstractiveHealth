@@ -3,7 +3,12 @@ import Cookies from "js-cookie";
 import RedirectButton from "../components/redirectButton";
 import "bulma/css/bulma.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faArrowRight,
+  faThumbsUp,
+  faThumbsDown,
+} from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 
 const ReviewAnnotatePage = () => {
@@ -14,6 +19,8 @@ const ReviewAnnotatePage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [questions_and_answers, setquestions_and_answers] = useState([]);
   const [answer, setAnswer] = useState({});
+  const [thumbsUp, setThumbsUp] = useState(false);
+  const [thumbsDown, setThumbsDown] = useState(false);
 
   const location = useLocation();
   const session_token = Cookies.get("session_token");
@@ -68,7 +75,7 @@ const ReviewAnnotatePage = () => {
       // load original answers into state
       const originalAnswers = {};
       data.forEach((q_and_a) => {
-        if(q_and_a.answer) originalAnswers[q_and_a.question] = q_and_a.answer;
+        if (q_and_a.answer) originalAnswers[q_and_a.question] = q_and_a.answer;
       });
       setAnswer(originalAnswers);
     } catch (error) {
@@ -84,11 +91,13 @@ const ReviewAnnotatePage = () => {
   };
 
   const handleUpdateAnswer = async (question, answer, filename) => {
+    setThumbsUp(false);
+    setThumbsDown(false);
     if (answer === undefined) {
       console.error("No answer for question: " + question);
       return;
     }
-  
+
     const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
@@ -109,22 +118,23 @@ const ReviewAnnotatePage = () => {
     handleCheckboxChange();
     handleNext();
   };
-  
 
   const getFileNames = async (location) => {
-    try {      
+    try {
       const data = location.state.info.map((item) => item["File Name"]);
       const finishedFilesResponse = await fetch(
         "http://localhost:3000/api/getFinished"
       );
       const finishedFiles = await finishedFilesResponse.json();
-      const sortedData = data.sort(
-        (a, b) => finishedFiles.includes(a) - finishedFiles.includes(b)
-      ).reverse();
+      const sortedData = data
+        .sort((a, b) => finishedFiles.includes(a) - finishedFiles.includes(b))
+        .reverse();
 
       for (let i = 0; i < sortedData.length; i++) {
         const response = await fetch(
-          `http://localhost:3000/api/files?filename=${encodeURIComponent(sortedData[i])}`
+          `http://localhost:3000/api/files?filename=${encodeURIComponent(
+            sortedData[i]
+          )}`
         );
         if (!response.ok) {
           sortedData.splice(i, 1);
@@ -140,7 +150,6 @@ const ReviewAnnotatePage = () => {
       console.log("Error:", error);
     }
   };
-
 
   const fetchFinishedFiles = async () => {
     try {
@@ -189,12 +198,14 @@ const ReviewAnnotatePage = () => {
         reader.onload = function (event) {
           const csvData = event.target.result;
           const lines = csvData.split("\n");
-          const rows = lines.map(line => line.split(","));
+          const rows = lines.map((line) => line.split(","));
           setFilePreview(
             <table>
-              {rows.map(row => (
+              {rows.map((row) => (
                 <tr>
-                  {row.map(cell => <td>{cell}</td>)}
+                  {row.map((cell) => (
+                    <td>{cell}</td>
+                  ))}
                 </tr>
               ))}
             </table>
@@ -204,9 +215,10 @@ const ReviewAnnotatePage = () => {
       }
     }
   };
-  
 
   const handlePrevious = () => {
+    setThumbsUp(false);
+    setThumbsDown(false);
     if (selectedFileIndex > 0) {
       setSelectedFileIndex(selectedFileIndex - 1);
       handleFileChange(fileNames[selectedFileIndex - 1]);
@@ -221,7 +233,7 @@ const ReviewAnnotatePage = () => {
   };
 
   const handleCheckboxChange = async (event) => {
-    const endpoint = "/api/addFinished"
+    const endpoint = "/api/addFinished";
     const options = {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -253,12 +265,14 @@ const ReviewAnnotatePage = () => {
       }),
     });
     if (response.ok) {
+      setThumbsUp(true);
+      setThumbsDown(false);
       console.log("Thumbs up updated successfully");
     } else {
       console.log("Thumbs up update failed");
     }
   };
-  
+
   const handleThumbsDown = async (question, filename) => {
     const response = await fetch(`http://localhost:3000/api/thumbsDown`, {
       method: "PATCH",
@@ -271,6 +285,8 @@ const ReviewAnnotatePage = () => {
       }),
     });
     if (response.ok) {
+      setThumbsDown(true);
+      setThumbsUp(false);
       console.log("Thumbs down updated successfully");
     } else {
       console.log("Thumbs down update failed");
@@ -315,9 +331,11 @@ const ReviewAnnotatePage = () => {
                   <div className="flex flex-col items-center mt-5">
                     <textarea
                       id="message"
-                      rows="15"
+                      rows="14"
                       class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={q_and_a.answer ? "" : "Write your answer here..."}
+                      placeholder={
+                        q_and_a.answer ? "" : "Write your answer here..."
+                      }
                       value={
                         answer.hasOwnProperty(q_and_a.question)
                           ? answer[q_and_a.question]
@@ -327,6 +345,34 @@ const ReviewAnnotatePage = () => {
                         handleAnswerChange(q_and_a.question, event)
                       }
                     ></textarea>
+                    {isAdmin && (
+                      <div className="flex mb-3">
+                        <button
+                          className={`${
+                            thumbsUp
+                              ? "bg-blue-300 text-black border-blue-400 border-2"
+                              : "text-white hover:bg-slate-500"
+                          } button bg-slate-800 hover:text-blackmx-2`}
+                          onClick={() =>
+                            handleThumbsUp(q_and_a.question, filename)
+                          }
+                        >
+                          <FontAwesomeIcon icon={faThumbsUp} />
+                        </button>
+                        <button
+                          className={`${
+                            thumbsDown
+                              ? "bg-blue-300 text-black border-blue-400 border-2"
+                              : "text-white hover:bg-slate-500"
+                          } button bg-slate-800 hover:text-black mx-2`}
+                          onClick={() =>
+                            handleThumbsDown(q_and_a.question, filename)
+                          }
+                        >
+                          <FontAwesomeIcon icon={faThumbsDown} />
+                        </button>
+                      </div>
+                    )}
                     <div className="flex flex-row">
                       <button
                         className="text-white bg-slate-400 p-2 rounded-md mx-2"
@@ -351,22 +397,6 @@ const ReviewAnnotatePage = () => {
                         <FontAwesomeIcon className="pl-2" icon={faArrowRight} />
                       </button>
                     </div>
-                    {isAdmin && (
-                      <button
-                        className="button bg-slate-800 text-white hover:text-black hover:bg-white mx-2"
-                        onClick={() => handleThumbsUp(q_and_a.question, filename)}
-                      >
-                        Thumbs Up
-                      </button>
-                    )}
-                    {isAdmin && (
-                      <button
-                        className="button bg-slate-800 text-white hover:text-black hover:bg-white mx-2"
-                        onClick={() => handleThumbsDown(q_and_a.question, filename)}
-                      >
-                        Thumbs Down
-                      </button>
-                    )}
                   </div>
                 </div>
               ))}
@@ -376,7 +406,6 @@ const ReviewAnnotatePage = () => {
       </div>
     </div>
   );
-  
 };
 
 export default ReviewAnnotatePage;
