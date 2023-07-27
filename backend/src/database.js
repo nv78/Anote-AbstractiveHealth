@@ -185,7 +185,9 @@ const updateAnswer = (file_name, question, answer) => {
  */
 const addFinished = (file_name) => {
     try {
-        database["finished"].push(file_name);
+        if (!(file_name in database["finished"])) {
+            database["finished"].push(file_name);
+        }
         saveDatabase();
     } catch (error) {
         console.error(`Error while making finished: ${error}`);

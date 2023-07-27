@@ -14,8 +14,8 @@ function Download() {
         if (!jsonObj.file_names.hasOwnProperty(file)) continue;
 
         let row = {};
-        row['FileName'] = file;
-        row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
+        row['File Name'] = file;
+        // row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
         // row['ThumbsUp'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_up : 'N/A';
         // row['ThumbsDown'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_down : 'N/A';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import RedirectButton from "../components/redirectButton";
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
@@ -21,35 +21,38 @@ const AdminPage = () => {
     useEffect(() => {
         if (selectedUser) {
             getFileNamesByUser();
+
         }
         getEverything();
     }, [selectedUser]);
 
-    const jsonToCSV = (json) => {
-        const rows = Object.keys(json);
+    const jsonToCSV = (json, questions, finished, userFileNames) => {
+        const rows = Object.keys(json).filter(fileName => userFileNames.includes(fileName));
         let csvStr = "data:text/csv;charset=utf-8,";
     
         // header
-        csvStr += "File Name,Answer" + "\n";
+        csvStr += "File Name," + questions.join(",") + ",Finished\n";
     
         // rows
         for (const row of rows) {
-            csvStr += row + "," + Object.values(json[row]).join(",") + "\n";
+            let rowStr = row + "," + Object.values(json[row]).join(",");
+            rowStr += finished.includes(row) ? ',Yes\n' : ',No\n';
+            csvStr += rowStr;
         }
     
         return encodeURI(csvStr);
     };
     
     
-
     const getAnswerTable = () => {
-        if (!jsonData) {
+        if (!jsonData || !jsonData.file_names) {
             return null;
         }
+    
         const { questions, file_names, finished } = jsonData;
-
+    
         const downloadTable = () => {
-            const csvUrl = jsonToCSV(jsonData.file_names);
+            const csvUrl = jsonToCSV(jsonData.file_names, questions, finished, userFileNames);
             let downloadLink = document.createElement('a');
             downloadLink.href = csvUrl;
             downloadLink.download = `${selectedUser}_review_table.csv`;
@@ -58,8 +61,7 @@ const AdminPage = () => {
             document.body.removeChild(downloadLink);
         }
         
-        
-
+    
         return (
             <div style={styles.tableContainer}>
             <button onClick={downloadTable}>Download</button>
@@ -92,6 +94,75 @@ const AdminPage = () => {
             </div>
         );
     };
+    
+    
+    // const jsonToCSV = (json) => {
+    //     const rows = Object.keys(json);
+    //     let csvStr = "data:text/csv;charset=utf-8,";
+    
+    //     // header
+    //     csvStr += "File Name,Answer" + "\n";
+    
+    //     // rows
+    //     for (const row of rows) {
+    //         csvStr += row + "," + Object.values(json[row]).join(",") + "\n";
+    //     }
+    
+    //     return encodeURI(csvStr);
+    // };
+    
+    
+
+    // const getAnswerTable = () => {
+    //     if (!jsonData || !jsonData.file_names) {
+    //         return null;
+    //     }
+    
+    //     const { questions, file_names, finished } = jsonData;
+
+    //     const downloadTable = () => {
+    //         const csvUrl = jsonToCSV(jsonData.file_names);
+    //         let downloadLink = document.createElement('a');
+    //         downloadLink.href = csvUrl;
+    //         downloadLink.download = `${selectedUser}_review_table.csv`;
+    //         document.body.appendChild(downloadLink);
+    //         downloadLink.click();
+    //         document.body.removeChild(downloadLink);
+    //     }
+        
+
+    //     return (
+    //         <div style={styles.tableContainer}>
+    //         <button onClick={downloadTable}>Download</button>
+    //         <table style={styles.table}>
+    //             <thead>
+    //                 <tr style={styles.headerRow}>
+    //                     <th style={styles.headerCell}>File Name</th>
+    //                     {questions.map((question, index) => (
+    //                         <th key={index} style={styles.headerCell}>{question}</th>
+    //                     ))}
+    //                     <th style={styles.headerCell}>Finished</th>
+    //                 </tr>
+    //             </thead>
+    //             <tbody>
+    //                 {Object.keys(file_names).map((fileName) => (
+    //                     userFileNames.includes(fileName) && (
+    //                         <tr key={fileName} style={styles.row}>
+    //                             <td style={styles.cell}>{fileName}</td>
+    //                             {file_names[fileName].map((answer, index) => (
+    //                                 <td key={index} style={styles.cell}>{answer}</td>
+    //                             ))}
+    //                             <td style={styles.cell}>
+    //                                 {finished.includes(fileName) ? 'Yes' : 'No'}
+    //                             </td>
+    //                         </tr>
+    //                     )
+    //                 ))}
+    //             </tbody>
+    //         </table>
+    //         </div>
+    //     );
+    // };
 
     const getEverything = async () => {
         const response = await fetch("http://localhost:3000/api/everything", {
@@ -102,7 +173,6 @@ const AdminPage = () => {
           throw new Error(`Unable to fetch questions: ${errorMessage}`);
         } else {
           const data = await response.json();
-          console.log("data", data)
           setJsonData(data); // JSON.parse is not needed as response.json() already parses the response.
         }
       };
