@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { saveAs } from "file-saver";
 import RedirectButton from "../components/redirectButton";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 const ReviewPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [jsonData, setJsonData] = useState(null);
@@ -73,8 +74,22 @@ const ReviewPage = () => {
             {answers[i] || "N/A"}
           </td>
         ))}
-        <td style={styles.cell}>{jsonData.review[file]?.thumbs_up || "0"}</td>
-        <td style={styles.cell}>{jsonData.review[file]?.thumbs_down || "0"}</td>
+        {/* <td style={styles.cell}>{jsonData.review[file]?.thumbs_up || "0"}</td>
+        <td style={styles.cell}>{jsonData.review[file]?.thumbs_down || "0"}</td> */}
+        <td style={styles.cell}>
+          {jsonData.review[file]?.thumbs_up == 1 && (
+            <FontAwesomeIcon icon={faThumbsUp} />
+          )}
+          {jsonData.review[file]?.thumbs_down == 1 && (
+            <FontAwesomeIcon icon={faThumbsDown} />
+          )}
+          {jsonData.review[file]?.thumbs_up == 0 &&
+            jsonData.review[file]?.thumbs_down == 0 &&
+            ""}
+        </td>
+        {/* <td style={styles.cell}>
+          {jsonData.review[file]?.thumbs_down == 1 ? "down" : ""}
+        </td> */}
       </tr>
     ));
   };
@@ -107,8 +122,8 @@ const ReviewPage = () => {
                   {question}
                 </th>
               ))}
-              <th style={styles.headerCell}>Thumbs Up</th>
-              <th style={styles.headerCell}>Thumbs Down</th>
+              <th style={styles.headerCell}>Review</th>
+              {/* <th style={styles.headerCell}>Thumbs Down</th> */}
             </tr>
           </thead>
           <tbody>{getRowsData()}</tbody>
