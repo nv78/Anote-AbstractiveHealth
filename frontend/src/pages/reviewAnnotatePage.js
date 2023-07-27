@@ -97,7 +97,7 @@ const ReviewAnnotatePage = () => {
       console.error("No answer for question: " + question);
       return;
     }
-
+  
     const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
@@ -109,15 +109,50 @@ const ReviewAnnotatePage = () => {
         fileName: filename,
       }),
     });
+  
     if (response.ok) {
       console.log("Answer updated successfully");
       setAnswer((prevAnswers) => ({ ...prevAnswers, [question]: answer })); // Just update the answer for the specific question in the state, not empty it
     } else {
       console.log("Answer update failed");
     }
+  
     handleCheckboxChange();
-    handleNext();
+    if (selectedFileIndex === fileNames.length - 1) {
+      window.location = "/review";  // Redirect to "/review" if it's the last file
+    } else {
+      handleNext();
+    }
   };
+  
+  // const handleUpdateAnswer = async (question, answer, filename) => {
+  //   setThumbsUp(false);
+  //   setThumbsDown(false);
+  //   if (answer === undefined) {
+  //     console.error("No answer for question: " + question);
+  //     return;
+  //   }
+
+  //   const response = await fetch(`http://localhost:3000/api/answer`, {
+  //     method: "PATCH",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       question: question,
+  //       answer: answer,
+  //       fileName: filename,
+  //     }),
+  //   });
+  //   if (response.ok) {
+  //     console.log("Answer updated successfully");
+  //     setAnswer((prevAnswers) => ({ ...prevAnswers, [question]: answer })); // Just update the answer for the specific question in the state, not empty it
+  //   } else {
+  //     console.log("Answer update failed");
+  //   }
+  //   handleCheckboxChange();
+  //   handleNext();
+  // };
 
   const getFileNames = async (location) => {
     try {
