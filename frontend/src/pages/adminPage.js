@@ -69,7 +69,7 @@ const AdminPage = () => {
     return (
       <div style={styles.tableContainer}>
         <button
-          className="bg-sky-500 py-2 px-3 rounded-lg text-white font-bold hover:text-white hover:bg-sky-800"
+          className="bg-sky-500 py-2 px-3 rounded-lg text-white font-bold hover:text-white hover:bg-sky-800 ml-[38rem]"
           onClick={downloadTable}
         >
           Download for Review
@@ -287,30 +287,39 @@ const AdminPage = () => {
   };
 
   const getFileAccessTable = () => (
-    <div style={styles.tableContainer}>
-      <button onClick={() => handleCheckAll()}>Check All</button>
-      <table style={styles.table}>
-        <thead>
-          <tr style={styles.headerRow}>
-            <th style={styles.headerCell}>File Name</th>
-            <th style={styles.headerCell}>Access</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fileNames.map((fileName) => (
-            <tr key={fileName} style={styles.row}>
-              <td style={styles.cell}>{fileName}</td>
-              <td style={styles.cell}>
-                <input
-                  type="checkbox"
-                  checked={userFileNames.includes(fileName)}
-                  onChange={(e) => handleFileCheck(fileName, e.target.checked)}
-                />
-              </td>
+    <div>
+      <button
+        className="bg-sky-500 py-2 px-3 rounded-lg text-white font-bold hover:bg-sky-800 ml-[53rem]"
+        onClick={() => handleCheckAll()}
+      >
+        Check All
+      </button>
+      <div style={styles.tableContainer}>
+        <table style={styles.table}>
+          <thead>
+            <tr style={styles.headerRow}>
+              <th style={styles.headerCell}>File Name</th>
+              <th style={styles.headerCell}>Access</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {fileNames.map((fileName) => (
+              <tr key={fileName} style={styles.row}>
+                <td style={styles.cell}>{fileName}</td>
+                <td style={styles.cell}>
+                  <input
+                    type="checkbox"
+                    checked={userFileNames.includes(fileName)}
+                    onChange={(e) =>
+                      handleFileCheck(fileName, e.target.checked)
+                    }
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 
