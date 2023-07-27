@@ -17,7 +17,7 @@ const ReviewPage = () => {
   const downloadData = () => {
     if (!jsonData) return;
 
-    let csvContent = "data:text/csv;charset=utf-8,";
+    let csvContent = "";
     csvContent +=
       ["File Name", ...jsonData.questions, "Thumbs Up", "Thumbs Down"].join(
         ","
