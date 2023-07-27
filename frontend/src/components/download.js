@@ -11,27 +11,32 @@ function Download() {
     let rows = [];
 
     for (let file in jsonObj.file_names) {
-      if (!jsonObj.file_names.hasOwnProperty(file)) continue;
+        if (!jsonObj.file_names.hasOwnProperty(file)) continue;
 
-      jsonObj.file_names[file].forEach((answer, i) => {
         let row = {};
-        row['FileName'] = file;
-        row['Question'] = jsonObj.questions[i] ? jsonObj.questions[i] : 'N/A';
-        row['Answer'] = answer;
-        row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
+        row['File Name'] = file;
+        // row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
+        // row['ThumbsUp'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_up : 'N/A';
+        // row['ThumbsDown'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_down : 'N/A';
+
+        jsonObj.questions.forEach((question, i) => {
+            row[question] = jsonObj.file_names[file][i] ? jsonObj.file_names[file][i] : 'N/A';
+        });
+
         rows.push(row);
-      });
     }
 
     // Convert object to CSV string
     const csv = rows.map(row => {
-      return Object.values(row).map(val => JSON.stringify(val)).join(',');
+        return Object.values(row).map(val => JSON.stringify(val)).join(',');
     }).join('\r\n');
 
     // Add header
     const header = Object.keys(rows[0]).join(',') + '\r\n';
     return header + csv;
-  };
+};
+
+  
 
 
   const getEverything = async () => {

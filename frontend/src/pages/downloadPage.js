@@ -25,7 +25,6 @@ const DownloadPage = () => {
     }
   };
 
-
   return (
     <div className="download">
       <h1 className="abstractivetitle">Abstractive Health</h1>
@@ -36,6 +35,7 @@ const DownloadPage = () => {
         <RedirectButton buttonText="Annotate" buttonUrl="/annotate" />
         <RedirectButton buttonText="Download" buttonUrl="/download" />
         <RedirectButton buttonText="Admin" buttonUrl="/admin" />
+        <RedirectButton buttonText="Review" buttonUrl="/review" />
       </nav>
       <Table />
     </div>

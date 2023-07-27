@@ -153,7 +153,7 @@ app.get("/api/fileNames", (req, res) => {
       res.status(500).send("Unable to scan directory");
       return;
     }
-    const allowedFileTypes = [".txt", ".pdf"];
+    const allowedFileTypes = [".txt", ".pdf", ".csv"];
     const filteredFiles = files.filter((file) =>
       allowedFileTypes.includes(path.extname(file))
     );
@@ -171,7 +171,7 @@ app.get("/api/files", (req, res) => {
       return;
       }
 
-      const allowedFileTypes = [".txt", ".pdf"];
+      const allowedFileTypes = [".txt", ".pdf", ".csv"];
       const filteredFiles = files.filter((file) =>
       allowedFileTypes.includes(path.extname(file))
       );
@@ -250,5 +250,22 @@ app.get("/api/getFinished", (req, res) => {
   const finished = db.getAllFinishedFiles();
   res.json(finished);
 });
+
+// Thumbs up
+app.patch("/api/thumbsUp", (req, res) => {
+  const file_name = req.body.fileName;
+  const question = req.body.question;
+  db.thumbsUp(file_name, question);
+  res.send("Successfully updated");
+});
+
+// Thumbs down
+app.patch("/api/thumbsDown", (req, res) => {
+  const file_name = req.body.fileName;
+  const question = req.body.question;
+  db.thumbsDown(file_name, question);
+  res.send("Successfully updated");
+});
+
 
 module.exports = app;

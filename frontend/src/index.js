@@ -9,6 +9,8 @@ import CustomizePage from "./pages/customizePage";
 import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/signupPage";
 import AdminPage from "./pages/adminPage"
+import ReviewPage from "./pages/reviewPage"
+import ReviewAnnotatePage from "./pages/reviewAnnotatePage";
 import "./index.css";
 
 
@@ -48,6 +50,14 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <AdminPage />,
+  },
+  {
+    path: "/review",
+    element: <ReviewPage />,
+  },
+  {
+    path: "/reviewAnnotate",
+    element: <ReviewAnnotatePage />,
   }
 ]);
 
