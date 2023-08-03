@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
-
+import "../styling/uploadButton.css";
 const UploadButton = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const session_token = Cookies.get("session_token");
@@ -61,12 +61,17 @@ const UploadButton = () => {
       </div>
       <div>
         {selectedFiles.length > 0 && (
-          <div className="mb-4 text-white" style={fileListStyle}>
-            <div className="text-lg text-white">Selected Files:</div>
+          <div
+            className="mb-4 border border-[#3498DA] mx-auto w-1/2 text-white overflow-auto h-36 scrollbar"
+            style={fileListStyle}
+          >
+            <div className="text-lg text-[#3498DA] font-semibold ">
+              Selected Files:
+            </div>
             <ul>
               {selectedFiles.map((file, index) => (
-                <li className="text-white mx-auto" key={index}>
-                  - {file.name}
+                <li className="text-white w-7/12 mx-auto text-left" key={index}>
+                  {index + 1}. {file.name}
                 </li>
               ))}
             </ul>
