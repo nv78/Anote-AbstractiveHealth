@@ -10,23 +10,25 @@ const cookieParser = require("cookie-parser");
 const { constants } = require("fs/promises");
 const app = express();
 
-
 function cleanText(text) {
-    const cleanedText = text.replace(/[^\w\s.]|_/g, '').replace(/\s+/g, '').toLowerCase();
-    return cleanedText;
-  }
-  
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "uploads/");
-    },
-    filename: function (req, file, cb) {
-      let file_name = file.originalname;
-      file_name = cleanText(file_name)
-      cb(null,file_name);
-    },
-  });
-  
+  const cleanedText = text
+    .replace(/[^\w\s.]|_/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+  return cleanedText;
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    let file_name = file.originalname;
+    // file_name = cleanText(file_name)
+    cb(null, file_name);
+  },
+});
+
 const upload = multer({ storage: storage });
 
 app.use(cors());
@@ -36,23 +38,23 @@ app.use(express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader(
-      "Content-Security-Policy",
-      "default-src 'none'; font-src 'self' http://localhost:3000;"
+    "Content-Security-Policy",
+    "default-src 'none'; font-src 'self' http://localhost:3000;"
   );
   next();
 });
 
 // Signup
 app.post("/api/signup", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const user = pw.getUser(username);
-    if (user !== undefined) {
-      res.status(401).send("User already exists");
-      return;
-    }
-    pw.addUser(username, password, false);
-    res.send("Successfully signed up");
+  const username = req.body.username;
+  const password = req.body.password;
+  const user = pw.getUser(username);
+  if (user !== undefined) {
+    res.status(401).send("User already exists");
+    return;
+  }
+  pw.addUser(username, password, false);
+  res.send("Successfully signed up");
 });
 
 // Login
@@ -73,34 +75,34 @@ app.post("/api/login", (req, res) => {
   // Save this session identifier in the database associated with the user
   const session_token = pw.updateUserSession(username);
   // Set a cookie in the user's browser with this session identifier
-  res.cookie('session_token', session_token, { httpOnly: true }); // httpOnly flag to protect against cross-site scripting attacks
-  res.json({message: "Successfully logged in", session_token: session_token});
+  res.cookie("session_token", session_token, { httpOnly: true }); // httpOnly flag to protect against cross-site scripting attacks
+  res.json({ message: "Successfully logged in", session_token: session_token });
 });
 
 // Logout
-app.get('/api/logout', (req, res) => {
-  res.clearCookie('session_id');
-  res.send('Logged out successfully');
+app.get("/api/logout", (req, res) => {
+  res.clearCookie("session_id");
+  res.send("Logged out successfully");
 });
 
 // Check admin
-app.get('/api/isAdmin', (req, res) => {
+app.get("/api/isAdmin", (req, res) => {
   const session_token = req.query.session_token;
   if (!pw.isAdmin(session_token)) {
     res.status(401).send("Unauthorized");
     return;
   }
   res.send("passed");
-})
+});
 
 // get all usernames
-app.get('/api/AllUsername', (req, res) => {
+app.get("/api/AllUsername", (req, res) => {
   const session_token = req.query.session_token;
   res.json(pw.getAllUsername(session_token));
-})
+});
 
 // get allowed projects by username
-app.get('/api/AllowedFiles', (req, res) => {
+app.get("/api/AllowedFiles", (req, res) => {
   let username = req.query.username;
   if (!username) {
     const session_token = req.query.session_token;
@@ -112,23 +114,23 @@ app.get('/api/AllowedFiles', (req, res) => {
     username = user.username;
   }
   res.json(pw.getAllowedFiles(username));
-})
+});
 
 // add allowed file name by username
-app.patch('/api/addAllowedFile', (req, res) => {
+app.patch("/api/addAllowedFile", (req, res) => {
   const username = req.body.username;
   const file_name = req.body.fileName;
   pw.addAllowedFile(username, file_name);
   res.send("Successfully updated");
-})
+});
 
 // delete allowed file name by username
-app.patch('/api/deleteAllowedFile', (req, res) => {
+app.patch("/api/deleteAllowedFile", (req, res) => {
   const username = req.body.username;
   const file_name = req.body.fileName;
   pw.deleteAllowedFile(username, file_name);
   res.send("Successfully updated");
-})
+});
 
 // pw end
 // Upload a file
@@ -143,7 +145,7 @@ app.post("/api/upload", upload.array("files"), function (req, res, next) {
   db.updateDatabase();
   res.send("Successfully uploaded!");
 });
-  
+
 // Get all file names
 app.get("/api/fileNames", (req, res) => {
   const directoryPath = path.join(__dirname, "uploads");
@@ -160,32 +162,32 @@ app.get("/api/fileNames", (req, res) => {
     res.json(filteredFiles);
   });
 });
-  
+
 // Get one file by file name
 app.get("/api/files", (req, res) => {
   const directoryPath = path.join(__dirname, "uploads");
   fs.readdir(directoryPath, (err, files) => {
-      if (err) {
+    if (err) {
       console.log("Unable to scan directory: " + err);
       res.status(500).send("Unable to scan directory");
       return;
-      }
+    }
 
-      const allowedFileTypes = [".txt", ".pdf", ".csv"];
-      const filteredFiles = files.filter((file) =>
+    const allowedFileTypes = [".txt", ".pdf", ".csv"];
+    const filteredFiles = files.filter((file) =>
       allowedFileTypes.includes(path.extname(file))
-      );
+    );
 
-      for (const file of filteredFiles) {
+    for (const file of filteredFiles) {
       if (file === req.query.filename) {
-          // Send file to client
-          res.sendFile(path.join(directoryPath, req.query.filename));
-          return;
+        // Send file to client
+        res.sendFile(path.join(directoryPath, req.query.filename));
+        return;
       }
-      }
+    }
 
-      // If we got here, file was not found
-      res.status(404).send("File not found");
+    // If we got here, file was not found
+    res.status(404).send("File not found");
   });
 });
 
@@ -266,6 +268,5 @@ app.patch("/api/thumbsDown", (req, res) => {
   db.thumbsDown(file_name, question);
   res.send("Successfully updated");
 });
-
 
 module.exports = app;
