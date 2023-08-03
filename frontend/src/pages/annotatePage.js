@@ -66,7 +66,7 @@ const AnnotatePage = () => {
       // load original answers into state
       const originalAnswers = {};
       data.forEach((q_and_a) => {
-        if(q_and_a.answer) originalAnswers[q_and_a.question] = q_and_a.answer;
+        if (q_and_a.answer) originalAnswers[q_and_a.question] = q_and_a.answer;
       });
       setAnswer(originalAnswers);
     } catch (error) {
@@ -86,7 +86,7 @@ const AnnotatePage = () => {
       console.error("No answer for question: " + question);
       return;
     }
-  
+
     const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
@@ -107,7 +107,6 @@ const AnnotatePage = () => {
     handleCheckboxChange();
     handleNext();
   };
-  
 
   const getFileNames = async () => {
     try {
@@ -171,7 +170,25 @@ const AnnotatePage = () => {
         const reader = new FileReader();
         reader.onload = function (event) {
           const text = event.target.result;
-          setFilePreview(<pre>{text}</pre>);
+          setFilePreview(
+            <div
+              style={{
+                maxHeight: "600px",
+                overflowY: "auto",
+                overflowX: "hidden",
+              }}
+            >
+              <pre
+                style={{
+                  whiteSpace: "pre-wrap",
+                  wordWrap: "break-word",
+                }}
+              >
+                {text}
+                {text}
+              </pre>
+            </div>
+          );
         };
         reader.readAsText(file);
       } else if (fileType === "csv") {
@@ -179,12 +196,14 @@ const AnnotatePage = () => {
         reader.onload = function (event) {
           const csvData = event.target.result;
           const lines = csvData.split("\n");
-          const rows = lines.map(line => line.split(","));
+          const rows = lines.map((line) => line.split(","));
           setFilePreview(
             <table>
-              {rows.map(row => (
+              {rows.map((row) => (
                 <tr>
-                  {row.map(cell => <td>{cell}</td>)}
+                  {row.map((cell) => (
+                    <td>{cell}</td>
+                  ))}
                 </tr>
               ))}
             </table>
@@ -194,7 +213,6 @@ const AnnotatePage = () => {
       }
     }
   };
-  
 
   const handlePrevious = () => {
     if (selectedFileIndex > 0) {
@@ -211,7 +229,7 @@ const AnnotatePage = () => {
   };
 
   const handleCheckboxChange = async (event) => {
-    const endpoint = "/api/addFinished"
+    const endpoint = "/api/addFinished";
     const options = {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -231,7 +249,6 @@ const AnnotatePage = () => {
     }
   };
 
-  
   return (
     <div className="upload">
       <h1 className="abstractivetitle">Abstractive Health</h1>
@@ -254,8 +271,8 @@ const AnnotatePage = () => {
       </nav>
       <div className="mx-auto w-3/4 my-5">
         <div className="flex flex-row">
-          <div className="h-full w-3/4">{filePreview}</div>
-          <div className="mx-auto w-1/2">
+          <div className="h-full w-3/5">{filePreview}</div>
+          <div className="mx-auto w-2/5">
             <div className="text-white h-full bg-gray-800 rounded-r-lg overflow-auto">
               <h2 className="text-white font-semibold text-xl mt-8 mx-10 text-left">
                 {fileNames[selectedFileIndex]}
@@ -273,7 +290,9 @@ const AnnotatePage = () => {
                       id="message"
                       rows="15"
                       class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={q_and_a.answer ? "" : "Write your answer here..."}
+                      placeholder={
+                        q_and_a.answer ? "" : "Write your answer here..."
+                      }
                       value={
                         answer.hasOwnProperty(q_and_a.question)
                           ? answer[q_and_a.question]
@@ -316,7 +335,6 @@ const AnnotatePage = () => {
       </div>
     </div>
   );
-  
 };
 
 export default AnnotatePage;
