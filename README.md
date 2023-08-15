@@ -7,7 +7,6 @@ Send/Email Docker Image to many architectures (AMD/ARM64) - See Vince and Ritika
 
 ## Installation
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-2. AWS CLI
 
 ## Run Docker 
 0. The build architecture (AMD64 vs ARM64) matters. Check the `cpu_arch` used for `abstractive-annotations` inside abstractive Infra. If you're running a different architecture, checkout Docker directions for [multi-platform builds]( https://docs.docker.com/build/building/multi-platform/).
