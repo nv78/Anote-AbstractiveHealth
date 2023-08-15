@@ -16,4 +16,4 @@ services:
       dockerfile: Dockerfile
     stop_signal: SIGINT
     ports:
-      - 30001:30001
+      - 3001:3001
