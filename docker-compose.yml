@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  prod-backend:
+    image: prod-ah-annotations-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    stop_signal: SIGINT
+    ports:
+      - 3000:3000
+  prod-frontend:
+    image: prod-ah-annotations-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    stop_signal: SIGINT
+    ports:
+      - 30001:30001
