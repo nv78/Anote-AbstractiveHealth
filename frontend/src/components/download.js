@@ -11,33 +11,36 @@ function Download() {
     let rows = [];
 
     for (let file in jsonObj.file_names) {
-        if (!jsonObj.file_names.hasOwnProperty(file)) continue;
+      if (!jsonObj.file_names.hasOwnProperty(file)) continue;
 
-        let row = {};
-        row['File Name'] = file;
-        // row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
-        // row['ThumbsUp'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_up : 'N/A';
-        // row['ThumbsDown'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_down : 'N/A';
+      let row = {};
+      row["File Name"] = file;
+      // row['Completed'] = jsonObj.finished.includes(file) ? "Yes" : "No";
+      // row['ThumbsUp'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_up : 'N/A';
+      // row['ThumbsDown'] = jsonObj.review[file] ? jsonObj.review[file].thumbs_down : 'N/A';
 
-        jsonObj.questions.forEach((question, i) => {
-            row[question] = jsonObj.file_names[file][i] ? jsonObj.file_names[file][i] : 'N/A';
-        });
+      jsonObj.questions.forEach((question, i) => {
+        row[question] = jsonObj.file_names[file][i]
+          ? jsonObj.file_names[file][i]
+          : "N/A";
+      });
 
-        rows.push(row);
+      rows.push(row);
     }
 
     // Convert object to CSV string
-    const csv = rows.map(row => {
-        return Object.values(row).map(val => JSON.stringify(val)).join(',');
-    }).join('\r\n');
+    const csv = rows
+      .map((row) => {
+        return Object.values(row)
+          .map((val) => JSON.stringify(val))
+          .join(",");
+      })
+      .join("\r\n");
 
     // Add header
-    const header = Object.keys(rows[0]).join(',') + '\r\n';
+    const header = Object.keys(rows[0]).join(",") + "\r\n";
     return header + csv;
-};
-
-  
-
+  };
 
   const getEverything = async () => {
     const response = await fetch("http://localhost:3000/api/everything", {
@@ -65,7 +68,8 @@ function Download() {
 
   return (
     <button
-      style={{ ...buttonStyle }}
+      className="mt-10 mb-3 bg-sky-500 py-2 px-3 rounded-lg text-white font-bold hover:bg-sky-800"
+      // style={{ ...buttonStyle }}
       onClick={handleDownload}
     >
       Download CSV
@@ -86,6 +90,6 @@ const buttonStyle = {
   fontSize: "16px",
   cursor: "pointer",
   borderRadius: "12px",
-  backgroundColor: "#28b2fb"
+  backgroundColor: "#28b2fb",
 };
 export default Download;

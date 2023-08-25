@@ -31,4 +31,4 @@ RUN npm install serve -g
 COPY --from=build /app/build /app/build/
 
 # run npm start from package json
-CMD ["npm","start"] 
+CMD ["npm","run","serve"] 

@@ -94,7 +94,6 @@
 //   },
 // };
 
-
 // export default Table;
 import React, { useState, useEffect } from "react";
 import Download from "../components/download";
@@ -152,18 +151,20 @@ const Table = () => {
       )
     );
 
-    return rows.slice(0, 10); // limit the rows to 10
+    return rows; // limit the rows to 10
   };
 
   return (
     <div>
-    <div style={styles.container}>
-    <Download style={{marginBottom: "10px"}}/>
-      <table style={styles.table}>
-        <thead>{getHeader()}</thead>
-        <tbody>{getRowsData()}</tbody>
-      </table>
-    </div>
+      <div>
+        <Download />
+        <div className="max-h-[64vh] rounded-3xl h-[64vh] overflow-y-scroll text-white w-3/4 mx-auto">
+          <table className="w-full relative text-white">
+            <thead className="sticky -top-1">{getHeader()}</thead>
+            <tbody>{getRowsData()}</tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
@@ -190,7 +191,7 @@ const styles = {
     border: "1px solid #000",
     fontWeight: "bold",
     textAlign: "center",
-    color: "white"
+    color: "white",
   },
   rowEven: {
     backgroundColor: "#222",

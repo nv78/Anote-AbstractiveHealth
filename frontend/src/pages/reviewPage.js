@@ -8,7 +8,8 @@ import { useOutletContext } from "react-router-dom";
 
 const ReviewPage = () => {
   const [jsonData, setJsonData] = useState(null);
-  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] = useOutletContext();
+  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] =
+    useOutletContext();
 
   useEffect(() => {
     const session_token = Cookies.get("session_token");
@@ -100,21 +101,23 @@ const ReviewPage = () => {
         >
           Download Data
         </button>
-        <table style={styles.table}>
-          <thead style={styles.headerRow}>
-            <tr>
-              <th style={styles.headerCell}>File Name</th>
-              {jsonData?.questions?.map((question, i) => (
-                <th style={styles.headerCell} key={`header_${i}`}>
-                  {question}
-                </th>
-              ))}
-              <th style={styles.headerCell}>Review</th>
-              {/* <th style={styles.headerCell}>Thumbs Down</th> */}
-            </tr>
-          </thead>
-          <tbody>{getRowsData()}</tbody>
-        </table>
+        <div className="max-h-[64vh] rounded-3xl h-[64vh] overflow-y-scroll text-white w-full mx-auto">
+          <table className="w-full relative text-white">
+            <thead className="sticky -top-1" style={styles.headerRow}>
+              <tr>
+                <th style={styles.headerCell}>File Name</th>
+                {jsonData?.questions?.map((question, i) => (
+                  <th style={styles.headerCell} key={`header_${i}`}>
+                    {question}
+                  </th>
+                ))}
+                <th style={styles.headerCell}>Review</th>
+                {/* <th style={styles.headerCell}>Thumbs Down</th> */}
+              </tr>
+            </thead>
+            <tbody>{getRowsData()}</tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

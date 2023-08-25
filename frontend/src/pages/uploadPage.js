@@ -6,7 +6,6 @@ import Papa from "papaparse";
 
 const UploadPage = () => {
   const navigate = useNavigate();
-
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {

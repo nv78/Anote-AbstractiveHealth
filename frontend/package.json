@@ -12,6 +12,7 @@
     "cross-fetch": "^3.1.6",
     "csv-parser": "^3.0.0",
     "file-saver": "^2.0.5",
+    "flowbite-react": "^0.5.0",
     "js-cookie": "^3.0.5",
     "json2csv": "^6.0.0-alpha.2",
     "mammoth": "^1.6.0",
@@ -29,7 +30,8 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "start": "serve -s build --cors",
+    "start": "react-scripts start",
+    "serve": "serve -s build --cors",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import RedirectButton from "../components/redirectButton";
 import "bulma/css/bulma.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Progress } from "flowbite-react";
 import {
   faArrowLeft,
   faArrowRight,
@@ -13,7 +14,8 @@ import { useLocation } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 
 const ReviewAnnotatePage = () => {
-  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] = useOutletContext();
+  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] =
+    useOutletContext();
   const [fileNames, setFileNames] = useState([]);
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const [filePreview, setFilePreview] = useState(null);
@@ -83,7 +85,7 @@ const ReviewAnnotatePage = () => {
       console.error("No answer for question: " + question);
       return;
     }
-  
+
     const response = await fetch(`http://localhost:3000/api/answer`, {
       method: "PATCH",
       headers: {
@@ -95,22 +97,22 @@ const ReviewAnnotatePage = () => {
         fileName: filename,
       }),
     });
-  
+
     if (response.ok) {
       console.log("Answer updated successfully");
       setAnswer((prevAnswers) => ({ ...prevAnswers, [question]: answer })); // Just update the answer for the specific question in the state, not empty it
     } else {
       console.log("Answer update failed");
     }
-  
+
     handleCheckboxChange();
     if (selectedFileIndex === fileNames.length - 1) {
-      window.location = "/review";  // Redirect to "/review" if it's the last file
+      window.location = "/review"; // Redirect to "/review" if it's the last file
     } else {
       handleNext();
     }
   };
-  
+
   // const handleUpdateAnswer = async (question, answer, filename) => {
   //   setThumbsUp(false);
   //   setThumbsDown(false);
@@ -139,6 +141,8 @@ const ReviewAnnotatePage = () => {
   //   handleCheckboxChange();
   //   handleNext();
   // };
+  const [loader, setLoader] = useState(0);
+  const [totalSize, setTotalSize] = useState(1);
 
   const getFileNames = async (location) => {
     try {
@@ -146,12 +150,16 @@ const ReviewAnnotatePage = () => {
       const finishedFilesResponse = await fetch(
         "http://localhost:3000/api/getFinished"
       );
+
+      console.log("data1");
       const finishedFiles = await finishedFilesResponse.json();
       const sortedData = data
         .sort((a, b) => finishedFiles.includes(a) - finishedFiles.includes(b))
         .reverse();
-
+      setTotalSize(sortedData.length);
+      console.log("data2", sortedData.length);
       for (let i = 0; i < sortedData.length; i++) {
+        setLoader(i + 1);
         const response = await fetch(
           `http://localhost:3000/api/files?filename=${encodeURIComponent(
             sortedData[i]
@@ -162,7 +170,8 @@ const ReviewAnnotatePage = () => {
           i--;
         }
       }
-
+      console.log("data3");
+      console.log("data", data);
       setFileNames(sortedData);
       if (sortedData.length > 0) {
         handleFileChange(sortedData[0]);
@@ -211,7 +220,24 @@ const ReviewAnnotatePage = () => {
         const reader = new FileReader();
         reader.onload = function (event) {
           const text = event.target.result;
-          setFilePreview(<pre>{text}</pre>);
+          setFilePreview(
+            <div
+              style={{
+                maxHeight: "600px",
+                overflowY: "auto",
+                overflowX: "hidden",
+              }}
+            >
+              <pre
+                style={{
+                  whiteSpace: "pre-wrap",
+                  wordWrap: "break-word",
+                }}
+              >
+                {text}
+              </pre>
+            </div>
+          );
         };
         reader.readAsText(file);
       } else if (fileType === "csv") {
@@ -333,98 +359,109 @@ const ReviewAnnotatePage = () => {
           </>
         )}
       </nav>
-      <div className="mx-auto w-3/4 my-5">
-        <div className="flex flex-row">
-          <div className="h-full w-3/4">{filePreview}</div>
-          <div className="mx-auto w-1/2">
-            <div className="text-white h-full bg-gray-800 rounded-r-lg overflow-auto">
-              <h2 className="text-white font-semibold text-xl mt-8 mx-10 text-left">
-                {fileNames[selectedFileIndex]}
-              </h2>
-              {questions_and_answers.map((q_and_a) => (
-                <div key={q_and_a.question} className="p-4">
-                  <div className="flex flex-row">
-                    <span className="w-5 h-5 -mr-3 mt-2 bg-slate-700 transform rotate-45"></span>
-                    <p className="bg-slate-700 p-4 rounded-lg">
-                      {q_and_a.question}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-center mt-5">
-                    <textarea
-                      id="message"
-                      rows="14"
-                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder={
-                        q_and_a.answer ? "" : "Write your answer here..."
-                      }
-                      value={
-                        answer.hasOwnProperty(q_and_a.question)
-                          ? answer[q_and_a.question]
-                          : q_and_a.answer || ""
-                      }
-                      onChange={(event) =>
-                        handleAnswerChange(q_and_a.question, event)
-                      }
-                    ></textarea>
-                    {isAdmin && (
-                      <div className="flex mb-3">
+      <div className="w-3/4 mx-auto">
+        <Progress textLabel="Retriving" progress={(loader * 100) / totalSize} />
+      </div>
+      {loader == totalSize && (
+        <div className="mx-auto w-3/4 my-5">
+          <div className="flex flex-row">
+            <div className="h-full w-3/4">{filePreview}</div>
+            <div className="mx-auto w-1/2">
+              <div className="text-white h-full bg-gray-800 rounded-r-lg overflow-auto">
+                <h2 className="text-white font-semibold text-xl mt-8 mx-10 text-left">
+                  {fileNames[selectedFileIndex]}
+                </h2>
+                {questions_and_answers.map((q_and_a) => (
+                  <div key={q_and_a.question} className="p-4">
+                    <div className="flex flex-row">
+                      <span className="w-5 h-5 -mr-3 mt-2 bg-slate-700 transform rotate-45"></span>
+                      <p className="bg-slate-700 p-4 rounded-lg">
+                        {q_and_a.question}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center mt-5">
+                      <textarea
+                        id="message"
+                        rows="14"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder={
+                          q_and_a.answer ? "" : "Write your answer here..."
+                        }
+                        value={
+                          answer.hasOwnProperty(q_and_a.question)
+                            ? answer[q_and_a.question]
+                            : q_and_a.answer || ""
+                        }
+                        onChange={(event) =>
+                          handleAnswerChange(q_and_a.question, event)
+                        }
+                      ></textarea>
+                      {isAdmin && (
+                        <div className="flex mb-3">
+                          <button
+                            className={`${
+                              thumbsUp
+                                ? "bg-blue-300 text-black border-blue-400 border-2"
+                                : "text-white hover:bg-slate-500"
+                            } button bg-slate-800 hover:text-blackmx-2`}
+                            onClick={() =>
+                              handleThumbsUp(q_and_a.question, filename)
+                            }
+                          >
+                            <FontAwesomeIcon icon={faThumbsUp} />
+                          </button>
+                          <button
+                            className={`${
+                              thumbsDown
+                                ? "bg-blue-300 text-black border-blue-400 border-2"
+                                : "text-white hover:bg-slate-500"
+                            } button bg-slate-800 hover:text-black mx-2`}
+                            onClick={() =>
+                              handleThumbsDown(q_and_a.question, filename)
+                            }
+                          >
+                            <FontAwesomeIcon icon={faThumbsDown} />
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex flex-row">
                         <button
-                          className={`${
-                            thumbsUp
-                              ? "bg-blue-300 text-black border-blue-400 border-2"
-                              : "text-white hover:bg-slate-500"
-                          } button bg-slate-800 hover:text-blackmx-2`}
-                          onClick={() =>
-                            handleThumbsUp(q_and_a.question, filename)
-                          }
+                          className="text-white bg-slate-400 p-2 rounded-md mx-2"
+                          onClick={handlePrevious}
+                          disabled={selectedFileIndex === 0}
                         >
-                          <FontAwesomeIcon icon={faThumbsUp} />
+                          <FontAwesomeIcon
+                            className="pr-2"
+                            icon={faArrowLeft}
+                          />
+                          Previous
                         </button>
                         <button
-                          className={`${
-                            thumbsDown
-                              ? "bg-blue-300 text-black border-blue-400 border-2"
-                              : "text-white hover:bg-slate-500"
-                          } button bg-slate-800 hover:text-black mx-2`}
+                          className="button bg-slate-800 text-white hover:text-black hover:bg-white"
                           onClick={() =>
-                            handleThumbsDown(q_and_a.question, filename)
+                            handleUpdateAnswer(
+                              q_and_a.question,
+                              answer[q_and_a.question],
+                              filename
+                            )
                           }
                         >
-                          <FontAwesomeIcon icon={faThumbsDown} />
+                          {" "}
+                          Confirm
+                          <FontAwesomeIcon
+                            className="pl-2"
+                            icon={faArrowRight}
+                          />
                         </button>
                       </div>
-                    )}
-                    <div className="flex flex-row">
-                      <button
-                        className="text-white bg-slate-400 p-2 rounded-md mx-2"
-                        onClick={handlePrevious}
-                        disabled={selectedFileIndex === 0}
-                      >
-                        <FontAwesomeIcon className="pr-2" icon={faArrowLeft} />
-                        Previous
-                      </button>
-                      <button
-                        className="button bg-slate-800 text-white hover:text-black hover:bg-white"
-                        onClick={() =>
-                          handleUpdateAnswer(
-                            q_and_a.question,
-                            answer[q_and_a.question],
-                            filename
-                          )
-                        }
-                      >
-                        {" "}
-                        Confirm
-                        <FontAwesomeIcon className="pl-2" icon={faArrowRight} />
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

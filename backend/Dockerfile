@@ -12,6 +12,8 @@ ENV PATH /app/node_modules/.bin:$PATH
 # npm ci will remove any previous existing node modules
 COPY package*.json ./
 RUN npm ci
+# copy the rest of your application code
+COPY . .
 RUN npm install react-scripts -g
 RUN npm install serve -g
 

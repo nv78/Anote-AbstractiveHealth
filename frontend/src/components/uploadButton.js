@@ -4,12 +4,13 @@ import "../styling/uploadButton.css";
 const UploadButton = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const session_token = Cookies.get("session_token");
-
+  const [loader, setLoader] = useState(false);
   const handleFileChange = (event) => {
     setSelectedFiles([...event.target.files]);
   };
 
   const handleSubmit = async () => {
+    setLoader(true);
     var formData = new FormData();
     console.log("selectedFiles");
     console.log(selectedFiles);
@@ -35,6 +36,7 @@ const UploadButton = () => {
       console.log("Files uploaded successfully");
       setSelectedFiles([]); // Clear the selected files
       window.alert("Files uploaded successfully");
+      setLoader(false);
     } else {
       console.log("File upload failed");
       window.alert("File upload failed/You are not admin");
@@ -86,6 +88,17 @@ const UploadButton = () => {
       >
         Upload the selected Files
       </button>
+      {loader && (
+        <div className="mt-4">
+          <div
+            class="animate-spin inline-block w-7 h-7 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+            role="status"
+            aria-label="loading"
+          >
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

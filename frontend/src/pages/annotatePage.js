@@ -7,7 +7,8 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useOutletContext } from "react-router-dom";
 
 const AnnotatePage = () => {
-  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] = useOutletContext();
+  const [isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin] =
+    useOutletContext();
   const [fileNames, setFileNames] = useState([]);
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const [filePreview, setFilePreview] = useState(null);
@@ -111,9 +112,9 @@ const AnnotatePage = () => {
       const sortedData = data.sort(
         (a, b) => finishedFiles.includes(a) - finishedFiles.includes(b)
       );
-      console.log('Allowed files', data)
-      console.log('FinishedFiles', finishedFiles)
-      console.log('sortedData', sortedData)
+      console.log("Allowed files", data);
+      console.log("FinishedFiles", finishedFiles);
+      console.log("sortedData", sortedData);
       setFileNames(sortedData);
       if (sortedData.length > 0) {
         handleFileChange(sortedData[0]);
@@ -173,7 +174,6 @@ const AnnotatePage = () => {
                   wordWrap: "break-word",
                 }}
               >
-                {text}
                 {text}
               </pre>
             </div>
