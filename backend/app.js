@@ -269,4 +269,51 @@ app.patch("/api/thumbsDown", (req, res) => {
   res.send("Successfully updated");
 });
 
+app.delete("/api/deleteFiles", (req, res) => {
+  const fileNames = req.body.fileNames; // Expect an array of filenames
+  const directoryPath = path.join(__dirname, "uploads");
+
+  let errors = [];
+
+  const deleteNextFile = (index) => {
+    if (index === fileNames.length) {
+      if (errors.length) {
+        res
+          .status(500)
+          .send(`Failed to delete some files: ${errors.join(", ")}`);
+        return;
+      }
+      res.send("Files and their records successfully deleted");
+      return;
+    }
+
+    const fileName = fileNames[index];
+
+    // 1. Delete the file from the folder
+    fs.unlink(path.join(directoryPath, fileName), (err) => {
+      if (err) {
+        console.error(`Failed to delete the file: ${err.message}`);
+        errors.push(fileName);
+
+        // Move to next file
+        deleteNextFile(index + 1);
+        return;
+      }
+
+      // 2. Delete the file record from the database
+      db.deleteFileRecord(fileName, (dbErr) => {
+        if (dbErr) {
+          console.error(`Failed to delete the file record: ${dbErr.message}`);
+          errors.push(fileName);
+        }
+        pw.deleteAllowedFileFromAllUsers(fileName);
+        // Move to next file
+        deleteNextFile(index + 1);
+      });
+    });
+  };
+
+  deleteNextFile(0);
+});
+
 module.exports = app;

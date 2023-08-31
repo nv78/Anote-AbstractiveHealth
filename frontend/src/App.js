@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Outlet } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -10,24 +10,28 @@ function App() {
   useEffect(() => {
     const session_token = Cookies.get("session_token");
     checkAdmin(session_token);
-  }, []);
+  }, [isSignedIn]);
 
   const checkAdmin = async (session_token) => {
     try {
-        const response = await fetch(`http://localhost:3000/api/isAdmin?session_token=${session_token}`);
-        if (!response.ok) {
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(true);
-        }
+      const response = await fetch(
+        `http://localhost:3000/api/isAdmin?session_token=${session_token}`
+      );
+      if (!response.ok) {
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(true);
+      }
     } catch (error) {
-        console.log("Not Authenticated as Admin:", error);
+      console.log("Not Authenticated as Admin:", error);
     }
   };
-  console.log('isAdmin', isAdmin, 'isSignedIn', isSignedIn)
+  console.log("isAdmin", isAdmin, "isSignedIn", isSignedIn);
   return (
     <div className="App">
-      <Outlet context={[isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin]} />
+      <Outlet
+        context={[isAdmin, setIsAdmin, isSignedIn, setIsSignedIn, checkAdmin]}
+      />
     </div>
   );
 }

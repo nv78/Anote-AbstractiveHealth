@@ -1,11 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UploadButton from "../components/uploadButton";
 import RedirectButton from "../components/redirectButton";
 import { useNavigate } from "react-router-dom";
 import Papa from "papaparse";
+import axios from "axios";
+import { Button, Checkbox, Table } from "flowbite-react";
+
+axios.defaults.baseURL = "http://localhost:3000";
 
 const UploadPage = () => {
   const navigate = useNavigate();
+  const [files, setFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState({});
+  const [selectAll, setSelectAll] = useState(false);
+  useEffect(() => {
+    // Fetch the list of files when the component mounts
+    // (This assumes you have an endpoint `/api/files` that returns a list of file names.)
+    axios
+      .get("/api/fileNames")
+      .then((response) => {
+        setFiles(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch files:", error);
+      });
+  }, []);
+  const toggleSelectAll = () => {
+    if (selectAll) {
+      setSelectedFiles({}); // Clear all selections
+    } else {
+      // Select all files
+      const allFiles = {};
+      files.forEach((file) => (allFiles[file] = true));
+      setSelectedFiles(allFiles);
+    }
+
+    setSelectAll(!selectAll);
+  };
+  const toggleSelect = (fileName) => {
+    setSelectedFiles((prevState) => ({
+      ...prevState,
+      [fileName]: !prevState[fileName],
+    }));
+
+    if (selectAll && !selectedFiles[fileName]) {
+      setSelectAll(false); // If unchecking any, uncheck "select all" as well
+    }
+  };
+
+  const deleteSelectedFiles = () => {
+    const filesToDelete = Object.keys(selectedFiles).filter(
+      (fileName) => selectedFiles[fileName]
+    );
+
+    axios
+      .delete("/api/deleteFiles", {
+        data: { fileNames: filesToDelete },
+      })
+      .then((response) => {
+        alert("Files deleted successfully!");
+        // Refresh the list after successful deletion
+        setFiles(files.filter((file) => !filesToDelete.includes(file)));
+      })
+      .catch((error) => {
+        alert("Failed to delete files. Please try again.");
+        console.error("Deletion failed:", error);
+      });
+  };
+  const areFilesSelected = Object.values(selectedFiles).some((val) => val);
+
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -51,6 +114,40 @@ const UploadPage = () => {
       <label className="ml-2" htmlFor="csvUpload" style={labelStyle}>
         Upload CSV
       </label>
+      <div className="text-white ">
+        <div className="flex items-center justify-around">
+          <div className="text-xl font-semibold my-5">Current Files</div>
+          <Button onClick={deleteSelectedFiles} disabled={!areFilesSelected}>
+            Delete Selected Files
+          </Button>{" "}
+        </div>
+        <div className="w-3/4 mx-auto h-[35vh] max-h-[35vh] overflow-y-scroll">
+          <Table>
+            <Table.Head>
+              <Table.HeadCell>
+                <Checkbox checked={selectAll} onChange={toggleSelectAll} />
+              </Table.HeadCell>
+              <Table.HeadCell>File Name</Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y">
+              {files.map((file) => (
+                <Table.Row
+                  className="border-gray-700 bg-gray-800 text-white"
+                  key={file}
+                >
+                  <Table.Cell>
+                    <Checkbox
+                      checked={selectedFiles[file] || false}
+                      onChange={() => toggleSelect(file)}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{file}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 };
