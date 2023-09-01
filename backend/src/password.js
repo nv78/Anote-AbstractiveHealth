@@ -36,9 +36,7 @@ try {
  */
 const saveDatabase = () => {
   try {
-    console.log("Saving database...");
     fs.writeFileSync(database_path, JSON.stringify(database));
-    console.log("Database saved!");
   } catch (err) {
     console.error(err);
   }
@@ -90,6 +88,8 @@ const _generateSessionToken = () => {
  * @param {boolean} is_admin - Whether the new user is an admin
  */
 const addUser = (username, password, is_admin) => {
+  if (fs.existsSync(database_path))
+    database = JSON.parse(fs.readFileSync(database_path, "utf8"));
   let salt = _generateSalt(16);
   let hashed_password = _hashPassword(password, salt);
   let session_token = _generateSessionToken();
@@ -110,6 +110,8 @@ const addUser = (username, password, is_admin) => {
  * @returns {string} The new session token
  */
 const updateUserSession = (username) => {
+  if (fs.existsSync(database_path))
+    database = JSON.parse(fs.readFileSync(database_path, "utf8"));
   const user = database.find((user) => user.username === username);
   const session_token = _generateSessionToken();
   if (!user) return;
@@ -210,6 +212,8 @@ const getAllowedFiles = (username) => {
  * @param {string} file_name - The file name to add
  */
 const addAllowedFile = (username, file_name) => {
+  if (fs.existsSync(database_path))
+    database = JSON.parse(fs.readFileSync(database_path, "utf8"));
   const user = getUser(username);
   if (!user) return;
   user.allowed_files.push(file_name);
@@ -222,6 +226,8 @@ const addAllowedFile = (username, file_name) => {
  * @param {string} file_name - The file name to delete
  */
 const deleteAllowedFile = (username, file_name) => {
+  if (fs.existsSync(database_path))
+    database = JSON.parse(fs.readFileSync(database_path, "utf8"));
   const user = getUser(username);
   if (!user) return;
   user.allowed_files = user.allowed_files.filter((file) => file !== file_name);
@@ -235,6 +241,8 @@ const deleteAllowedFile = (username, file_name) => {
 const deleteAllowedFileFromAllUsers = (file_name) => {
   // Assuming you have a method to fetch all users.
   // This method could vary based on your database structure and method of storage.
+  if (fs.existsSync(database_path))
+    database = JSON.parse(fs.readFileSync(database_path, "utf8"));
   const allUsers = getAllUsers();
 
   allUsers.forEach((user) => {

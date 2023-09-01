@@ -10,25 +10,6 @@ let database = {
   review: {},
 };
 
-// {
-//     questions: ["question1", "questions2"],
-//     file_names: {
-//         "file_name1": ["answer1", "answer2"],
-//         "file_name2": ["answer1", "answer2"],
-//     },
-//     finished: ["file_name1", "file_name2"],
-//     review: {
-//         "file_name1": {
-//             thumbs_up: 0,
-//             thumbs_down: 0
-//         },
-//         "file_name2": {
-//             thumbs_up: 0,
-//             thumbs_down: 0
-//         },
-//     }
-// }
-
 try {
   // Load existing data from file if it exists
   // Else create a new database
@@ -48,10 +29,8 @@ try {
  */
 const saveDatabase = () => {
   try {
-    console.log("Saving database...");
     let data = JSON.stringify(database);
     fs.writeFileSync(databasePath, data);
-    console.log("Database saved!");
   } catch (error) {
     console.error(`Error while saving database: ${error}`);
   }
@@ -170,6 +149,10 @@ const deleteQuestionAndAnswer = (question) => {
  */
 const updateAnswer = (file_name, question, answer) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     const question_index = database["questions"].indexOf(question);
     if (question_index === -1) {
       return;
@@ -187,6 +170,10 @@ const updateAnswer = (file_name, question, answer) => {
  */
 const addFinished = (file_name) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     if (!(file_name in database["finished"])) {
       database["finished"].push(file_name);
     }
@@ -202,6 +189,10 @@ const addFinished = (file_name) => {
  */
 const deleteFinished = (file_name) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     const index = database["finished"].indexOf(file_name);
     if (index === -1) {
       return;
@@ -219,6 +210,10 @@ const deleteFinished = (file_name) => {
  */
 const getEverything = () => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     return database;
   } catch (error) {
     console.error(`Error while getting everything: ${error}`);
@@ -228,6 +223,10 @@ const getEverything = () => {
 
 const thumbsUp = (file_name) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     database["review"][file_name]["thumbs_up"] = 1;
     if (database["review"][file_name]["thumbs_down"] > 0) {
       database["review"][file_name]["thumbs_down"] = 0;
@@ -240,6 +239,10 @@ const thumbsUp = (file_name) => {
 
 const thumbsDown = (file_name) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     database["review"][file_name]["thumbs_down"] = 1;
     if (database["review"][file_name]["thumbs_up"] > 0) {
       database["review"][file_name]["thumbs_up"] = 0;
@@ -256,6 +259,10 @@ const thumbsDown = (file_name) => {
  */
 const getAllFinishedFiles = () => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     return JSON.stringify(database["finished"]);
   } catch (error) {
     console.error(`Error while getting all finished files: ${error}`);
@@ -269,6 +276,10 @@ const getAllFinishedFiles = () => {
  */
 const getAllQuestions = () => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     // return stringified array of all questions
     return JSON.stringify(database["questions"]);
   } catch (error) {
@@ -284,6 +295,10 @@ const getAllQuestions = () => {
  */
 const getAllQuestionAndAnswerFromFileName = (file_name) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     if (!database["file_names"][file_name]) {
       return [];
     }
@@ -311,6 +326,10 @@ const getAllQuestionAndAnswerFromFileName = (file_name) => {
  */
 const deleteFileRecord = (file_name, callback) => {
   try {
+    if (fs.existsSync(databasePath)) {
+      let rawdata = fs.readFileSync(databasePath);
+      database = JSON.parse(rawdata);
+    }
     // Check if file_name exists in the database
     if (!database["file_names"][file_name]) {
       return callback(new Error("Filename not found in database"));

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import "../styling/uploadButton.css";
-const UploadButton = () => {
+const UploadButton = ({ onSuccessfulUpload }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const session_token = Cookies.get("session_token");
   const [loader, setLoader] = useState(false);
@@ -37,6 +37,7 @@ const UploadButton = () => {
       setSelectedFiles([]); // Clear the selected files
       window.alert("Files uploaded successfully");
       setLoader(false);
+      onSuccessfulUpload();
     } else {
       console.log("File upload failed");
       window.alert("File upload failed/You are not admin");
@@ -91,11 +92,11 @@ const UploadButton = () => {
       {loader && (
         <div className="mt-4">
           <div
-            class="animate-spin inline-block w-7 h-7 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+            className="animate-spin inline-block w-7 h-7 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
             role="status"
             aria-label="loading"
           >
-            <span class="sr-only">Loading...</span>
+            <span className="sr-only">Loading...</span>
           </div>
         </div>
       )}

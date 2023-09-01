@@ -13,6 +13,7 @@ const UploadPage = () => {
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState({});
   const [selectAll, setSelectAll] = useState(false);
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     // Fetch the list of files when the component mounts
     // (This assumes you have an endpoint `/api/files` that returns a list of file names.)
@@ -25,6 +26,16 @@ const UploadPage = () => {
         console.error("Failed to fetch files:", error);
       });
   }, []);
+  const refreshFileList = () => {
+    axios
+      .get("/api/fileNames")
+      .then((response) => {
+        setFiles(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch files:", error);
+      });
+  };
   const toggleSelectAll = () => {
     if (selectAll) {
       setSelectedFiles({}); // Clear all selections
@@ -49,6 +60,7 @@ const UploadPage = () => {
   };
 
   const deleteSelectedFiles = () => {
+    setLoader(true);
     const filesToDelete = Object.keys(selectedFiles).filter(
       (fileName) => selectedFiles[fileName]
     );
@@ -61,10 +73,12 @@ const UploadPage = () => {
         alert("Files deleted successfully!");
         // Refresh the list after successful deletion
         setFiles(files.filter((file) => !filesToDelete.includes(file)));
+        setLoader(false);
       })
       .catch((error) => {
         alert("Failed to delete files. Please try again.");
         console.error("Deletion failed:", error);
+        setLoader(false);
       });
   };
   const areFilesSelected = Object.values(selectedFiles).some((val) => val);
@@ -101,7 +115,10 @@ const UploadPage = () => {
         <RedirectButton buttonText="Admin" buttonUrl="/admin" />
         <RedirectButton buttonText="Review" buttonUrl="/review" />
       </nav>
-      <UploadButton className="uploadBtn" />
+      <UploadButton
+        className="uploadBtn"
+        onSuccessfulUpload={refreshFileList}
+      />
       <span className="text-white font-semibold">For Reviewing :</span>
       <input
         type="file"
@@ -117,9 +134,22 @@ const UploadPage = () => {
       <div className="text-white ">
         <div className="flex items-center justify-around">
           <div className="text-xl font-semibold my-5">Current Files</div>
-          <Button onClick={deleteSelectedFiles} disabled={!areFilesSelected}>
-            Delete Selected Files
-          </Button>{" "}
+          <div className="flex">
+            <Button onClick={deleteSelectedFiles} disabled={!areFilesSelected}>
+              Delete Selected Files
+            </Button>{" "}
+            {loader && (
+              <div className="mt-2 ml-4">
+                <div
+                  className="animate-spin inline-block w-7 h-7 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="w-3/4 mx-auto h-[35vh] max-h-[35vh] overflow-y-scroll">
           <Table>
