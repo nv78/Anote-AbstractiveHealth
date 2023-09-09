@@ -89,8 +89,8 @@ const UploadPage = () => {
     (data || []).forEach((result) => {
       const filename = result[fileNameKey];
       Object.keys(result).forEach((question)=> {
-        if(question !== fileNameKey) {
-          const answer = result[question];
+        const answer = result[question];
+        if(question !== fileNameKey && answer !== "N/A") {
           payloads.push({
             question: question,
             answer: answer,
