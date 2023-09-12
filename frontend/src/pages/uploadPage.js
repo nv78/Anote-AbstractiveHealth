@@ -83,19 +83,49 @@ const UploadPage = () => {
   };
   const areFilesSelected = Object.values(selectedFiles).some((val) => val);
 
+  const organizeDataToPayloads = (data) => {
+    const fileNameKey = 'File Name';
+    const payloads = [];
+    (data || []).forEach((result) => {
+      const filename = result[fileNameKey];
+      Object.keys(result).forEach((question)=> {
+        const answer = result[question];
+        if(question !== fileNameKey && answer !== "N/A") {
+          payloads.push({
+            question: question,
+            answer: answer,
+            fileName: filename,
+          })
+        }
+      })
+    })
+    return payloads
+  }
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         const csvString = reader.result;
-
         Papa.parse(csvString, {
           header: true,
           skipEmptyLines: true,
           complete: (results) => {
-            console.log(results.data);
-            navigate("/reviewAnnotate", { state: { info: results.data } });
+            const payloads = organizeDataToPayloads(results.data);
+            const httpCalls = payloads.map((payload) => {
+              return fetch(`http://localhost:3000/api/answer`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+              }).then(response => response.ok ? 
+                console.info(payload['question'] + " annotation upload success ") : 
+                console.error(payload['question'] + " annotation upload failure "));
+            })
+            Promise.all(httpCalls).then(() => {
+              navigate("/reviewAnnotate", { state: { info: results.data } });
+            })
           },
         });
       };
