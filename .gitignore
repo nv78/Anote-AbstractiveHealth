@@ -1,4 +1,6 @@
 backend/node_modules
 frontend/node_modules
-
+backend/uploads
+backend/src/database.json
+backend/src/password.json
 .DS_Store
